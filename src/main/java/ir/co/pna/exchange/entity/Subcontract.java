@@ -11,7 +11,7 @@ import java.util.Calendar;
 
 
 @Entity
-@DiscriminatorValue("subcontract")
+//@DiscriminatorValue("subcontract")
 public class SubContract extends Contract {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,

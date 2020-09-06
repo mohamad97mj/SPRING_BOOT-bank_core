@@ -1,6 +1,7 @@
 package ir.co.pna.exchange.dao.User;
 
 import ir.co.pna.exchange.entity.User;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,16 +35,18 @@ public class UserDAOJpaImpl implements UserDAO {
 	}
 
 	@Override
-	public User findById(long theId) {
+	public User findById(String userId) {
+
+		Session currentSession = entityManager.unwrap(Session.class);
 
 		User theUser =
-				entityManager.find(User.class, theId);
+				entityManager.find(User.class, userId);
 		
 		return theUser;
 	}
 
 	@Override
-	public long save(User theUser) {
+	public String save(User theUser) {
 
 		User dbUser = entityManager.merge(theUser);
 		
@@ -55,13 +58,13 @@ public class UserDAOJpaImpl implements UserDAO {
 	}
 
 	@Override
-	public void deleteById(long theId) {
+	public void deleteById(String userId) {
 
 		// delete object with primary key
 		Query theQuery = entityManager.createQuery(
 							"delete from User where nationalCode=:userId");
 		
-		theQuery.setParameter("userId", theId);
+		theQuery.setParameter("userId", userId);
 		
 		theQuery.executeUpdate();
 	}

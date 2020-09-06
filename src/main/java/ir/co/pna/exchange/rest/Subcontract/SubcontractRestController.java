@@ -2,7 +2,7 @@ package ir.co.pna.exchange.rest.Contract;
 
 import ir.co.pna.exchange.entity.Contract;
 import ir.co.pna.exchange.exception.MyEntityNotFoundException;
-import ir.co.pna.exchange.service.Contract.ContractService;
+import ir.co.pna.exchange.service.NormalContract.NormalContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +11,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class ContractRestController {
+public class SubcontractRestController {
 
-	private ContractService contractService;
-	
+	private NormalContractService contractService;
+
 	@Autowired
-	public ContractRestController(ContractService theContractService) {
+	public SubcontractRestController(NormalContractService theContractService) {
 		contractService = theContractService;
 	}
 	
