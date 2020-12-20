@@ -1,140 +1,157 @@
 package ir.co.pna.exchange.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.co.pna.exchange.emum.ContractStatus;
+import ir.co.pna.exchange.emum.JudgeVote;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+
 
 
 @Entity
 @Table(name = "contract")
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type",discriminatorType= DiscriminatorType.STRING)
-@DiscriminatorValue(value="contract")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Contract {
-
+    @TableGenerator(name = "CONTRACT_ID_Gen", table = "CONTRACT_ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", pkColumnValue = "ID_Gen", initialValue = 10000, allocationSize = 100)
     @Id
     @Column(name = "id")
+    @JsonProperty("id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CONTRACT_ID_Gen")
     protected int id;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "owner_contract",
-            joinColumns = @JoinColumn(name = "contract_id"),
-            inverseJoinColumns = @JoinColumn(name = "owner_bank_account_id")
+    @Column(name = "judge_vote")
+    @JsonProperty("judge_vote")
+    protected JudgeVote judgeVote;
+
+
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH}
     )
-    protected List<Owner> owners; // first is srcOwner and second is dstOwner
+    @JoinColumn(name = "dst_owner_id")
+    @JsonProperty("dst_owner_bank_account_id")
+    protected PublicOwner dstPublicOwner;
 
     @Column(name = "expire_date")
-    private Calendar expireDate;
+    @JsonProperty("expire_date")
+    private long expireDate;
 
     @Column(name = "value_in_rial")
+    @JsonProperty("value_in_rial")
     protected long valueInRial;
 
     @Column(name = "remittance_value")
+    @JsonProperty("remittance_value")
     protected long remittanceValue;
 
     @Column(name = "description")
+    @JsonProperty("description")
     private String description;
 
-    @OneToMany(mappedBy = "contract", fetch= FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    protected List<Account> accounts;
 
-    @Column(name = "contract_status")
-    protected ContractStatus contractStatus;
+    @Column(name = "status")
+    @JsonProperty("status")
+    protected ContractStatus status;
 
-    private void init () {
-        accounts = new ArrayList<>();
-        owners = new ArrayList<>();
+    private void init() {
     }
 
-    public Contract(){
+    public Contract() {
 
     }
 
-    public Contract(int id, Calendar expireDate, Owner srcOwner, Owner dstOwner, long valueInRial, long remittanceValue, String description) {
+    public Contract(long expireDate, PublicOwner dstPublicOwner, long valueInRial, long remittanceValue, String description) {
 
         init();
 
-        this.id = id;
+//        this.id = id;
         this.expireDate = expireDate;
         this.valueInRial = valueInRial;
         this.remittanceValue = remittanceValue;
         this.description = description;
-
-        srcOwner.addContract(this);
-        dstOwner.addContract(this);
-
-//        returnAccount.setContract(this);
-//        claimAccount.setContract(this);
-
-        owners.add(srcOwner);
-        owners.add(dstOwner);
-
-//        accounts.add(returnAccount);
-//        accounts.add(claimAccount);
+        this.judgeVote = JudgeVote.NOT_CLAIMED;
+        this.dstPublicOwner = dstPublicOwner;
 
     }
 
+    //custom serializing ...............................................................................................
+
+    @JsonGetter("dst_owner_bank_account_id")
+    public String getDstOwnerJson() {
+        return this.dstPublicOwner.getBankAccountId();
+    }
 
 
     // getters and setters .............................................................................................
 
-    public void addAccount(Account account) {
-        this.accounts.add(account);
+    public int getId() {
+        return id;
     }
 
-    public Owner getSrcOwner() {
-        return owners.get(0);
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Owner getDstOwner() {
-        return owners.get(1);
+    public JudgeVote getJudgeVote() {
+        return judgeVote;
     }
 
-    public Calendar getExpireDate() {
+    public void setJudgeVote(JudgeVote judgeVote) {
+        this.judgeVote = judgeVote;
+    }
+
+    public PublicOwner getDstPublicOwner() {
+        return dstPublicOwner;
+    }
+
+    public void setDstPublicOwner(PublicOwner dstPublicOwner) {
+        this.dstPublicOwner = dstPublicOwner;
+    }
+
+    public long getExpireDate() {
         return expireDate;
+    }
+
+    public void setExpireDate(long expireDate) {
+        this.expireDate = expireDate;
     }
 
     public long getValueInRial() {
         return valueInRial;
     }
 
+    public void setValueInRial(long valueInRial) {
+        this.valueInRial = valueInRial;
+    }
+
     public long getRemittanceValue() {
         return remittanceValue;
+    }
+
+    public void setRemittanceValue(long remittanceValue) {
+        this.remittanceValue = remittanceValue;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public Account getReturnAccount() {
-        return accounts.get(0);
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Account getClaimAccount() {
-        return accounts.get(1);
+    public ContractStatus getStatus() {
+        return status;
     }
 
-    public int getId() {
-        return id;
+    public void setStatus(ContractStatus contractStatus) {
+        this.status = contractStatus;
     }
 
-    public void setContractStatus(ContractStatus contractStatus) {
-        this.contractStatus = contractStatus;
-    }
-
-    public ContractStatus getContractStatus() {
-        return contractStatus;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }

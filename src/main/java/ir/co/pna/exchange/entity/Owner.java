@@ -1,7 +1,5 @@
 package ir.co.pna.exchange.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.co.pna.exchange.emum.OwnerType;
@@ -9,158 +7,86 @@ import ir.co.pna.exchange.emum.OwnerType;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
 
 @Entity
-@Table(name = "owner")
-@JsonIgnoreProperties({"users", "contracts", "accounts" , "oneSideInternalTransactions", "inExternalTransactions", "outExternalTransactions"})
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Owner {
 
     @Id
     @Column(name = "bank_account_id")
     @JsonProperty("bank_account_id")
-    private long bankAccountId;
+    private String bankAccountId;
 
-    @Column(name = "owner_type")
     @JsonProperty("owner_type")
-    private OwnerType ownerType;
+    @Column(name = "owner_type")
+    protected OwnerType ownerType;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "owner_user",
-            joinColumns = @JoinColumn(name = "owner_bank_account_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_national_code")
+
+    @OneToMany(
+            mappedBy = "dstOwner",
+            fetch = FetchType.LAZY,
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
     )
-    private List<User> users;
-
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    private List<Account> accounts;
-
-    @OneToMany(mappedBy = "src", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    private List<OneSideInternalTransaction> oneSideInternalTransactions;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "owner_contract",
-            joinColumns = @JoinColumn(name = "owner_bank_account_id"),
-            inverseJoinColumns = @JoinColumn(name = "contract_id")
-    )
-    private List<Contract> contracts;
-
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "in_external_transaction_id")
     private List<ExternalTransaction> inExternalTransactions;
-
-    @OneToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "out_external_transaction_id")
+    //
+    @OneToMany(
+            mappedBy = "srcOwner",
+            fetch = FetchType.LAZY,
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
     private List<ExternalTransaction> outExternalTransactions;
 
-    @Transient
-    private Scanner scanner;
-
-
     private void init() {
-        scanner = new Scanner(System.in);
-        users = new ArrayList<>();
-        accounts = new ArrayList<>();
-        contracts = new ArrayList<>();
-        oneSideInternalTransactions = new ArrayList<>();
         inExternalTransactions = new ArrayList<>();
         outExternalTransactions = new ArrayList<>();
     }
 
-    public Owner() {
-
-    }
-
-    public Owner(long bankAccountId, OwnerType ownerType) {
+    public Owner(String bankAccountId, OwnerType ownerType)
+    {
         init();
         this.bankAccountId = bankAccountId;
         this.ownerType = ownerType;
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
-        user.own(this);
+    public Owner(){}
+
+
+    public void addInExternalTransactions(ExternalTransaction exTransaction) {
+        this.inExternalTransactions.add(exTransaction);
     }
 
-    // getters and setters .............................................................................................
+    public void addOutExternalTransactions(ExternalTransaction exTransaction) {
+        this.outExternalTransactions.add(exTransaction);
+    }
+    public List<ExternalTransaction> getInExternalTransactions() {
+        return inExternalTransactions;
+    }
 
-    public long getBankAccountId() {
+    public List<ExternalTransaction> getOutExternalTransactions() {
+        return outExternalTransactions;
+    }
+
+
+    public String getBankAccountId() {
         return bankAccountId;
     }
 
-    public void setBankAccountId(long bankAccountId) {
+    public void setBankAccountId(String bankAccountId) {
         this.bankAccountId = bankAccountId;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public OwnerType getOwnerType(){
+        return this.ownerType;
     }
 
-    public void setUsers(ArrayList<User> listOfUsers) {
-        this.users = listOfUsers;
-    }
-
-    public OwnerType getOwnerType() {
-        return ownerType;
-    }
-
-    public void addAccount(Account account) {
-        accounts.add(account);
-    }
-
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void addContract(Contract contract) {
-        this.contracts.add(contract);
-    }
-
-    public void addOneSideInternalTransactions(OneSideInternalTransaction transaction) {
-        this.oneSideInternalTransactions.add(transaction);
-    }
-
-    //custom serializing ...............................................................................................
-
-//    @JsonGetter("users")
-//    public ArrayList<Long> getListOfUsers() {
-//        ArrayList<Long> tmp = new ArrayList<>();
-//        for (User user : users) {
-//            tmp.add(user.getNationalCode());
-//        }
-//        return tmp;
-//    }
-//
-//    @JsonGetter("accounts")
-//    public ArrayList<Long> getListOfAccounts() {
-//        ArrayList<Long> tmp = new ArrayList<>();
-//        for (Account account : accounts) {
-//            tmp.add(account.getId());
-//        }
-//        return tmp;
-//    }
-//
-//    @JsonGetter("contracts")
-//    public ArrayList<Integer> getListOfContracts() {
-//        ArrayList<Integer> tmp = new ArrayList<>();
-//        for (Contract contract : contracts) {
-//            tmp.add(contract.getId());
-//        }
-//        return tmp;
-//    }
 }
-
-

@@ -1,68 +1,84 @@
 package ir.co.pna.exchange.entity;
+
 import ir.co.pna.exchange.emum.AccountType;
+import ir.co.pna.exchange.exception.EntityBadRequestException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Entity
 @Table(name = "account")
 public class Account {
-
+    //    @TableGenerator(name = "ACCOUNT_ID_Gen", initialValue = 10000, allocationSize = 100)
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy   = GenerationType.TABLE, generator = "ACCOUNT_ID_Gen")
     private long id;
 
     @Column(name = "type")
     private AccountType type; // role, could be money exchanger, importer or exporter
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "contract_id")
-    private Contract contract;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "owner_bank_account_id")
-    private Owner owner;
-
-    @Column(name = "expire_date")
-    private Calendar expireTime;
-
     @Column(name = "credit")
     private long credit;
 
-    @OneToMany(mappedBy = "srcAccount")
+    @Column(name = "expire_date")
+    private long expireTime;
+
+
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "owner_bank_account_id")
+    private OperationalOwner owner;
+
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "srcAccount",
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
     private List<Transaction> inTransactions;
 
-    @OneToMany(mappedBy = "dstAccount")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "dstAccount",
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
     private List<Transaction> outTransactions;
 
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "account_transaction",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "transaction_id")
-    )
-    private List<Transaction> transactions;
-
     private void init() {
-        transactions = new ArrayList<>();
+        inTransactions = new ArrayList<>();
+        outTransactions = new ArrayList<>();
     }
 
 
-    public Account(){ }
+    public Account() {
+    }
 
-    public Account(long id, AccountType type, Owner owner, Calendar expireTime, Contract contract) {
+    public Account(AccountType type, OperationalOwner owner, long expireTime, Contract contract) {
 
         init();
 
         owner.addAccount(this);
-        this.id = id;
+//        this.id = id;
         this.type = type;
         this.owner = owner;
         this.expireTime = expireTime;
@@ -70,7 +86,12 @@ public class Account {
     }
 
     public void decreaseCredit(long value) {
-        this.credit = this.credit - value;
+        if (this.credit >= value) {
+            this.credit = this.credit - value;
+        }
+        else{
+            throw new EntityBadRequestException("not enough credit! for account: " + this.id);
+        }
     }
 
     public void increaseCredit(long value) {
@@ -78,6 +99,7 @@ public class Account {
     }
 
     // getters and setters .............................................................................................
+
 
     public long getId() {
         return id;
@@ -95,6 +117,22 @@ public class Account {
         this.type = type;
     }
 
+    public long getCredit() {
+        return credit;
+    }
+
+    public void setCredit(long credit) {
+        this.credit = credit;
+    }
+
+    public long getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(long expireTime) {
+        this.expireTime = expireTime;
+    }
+
     public Contract getContract() {
         return contract;
     }
@@ -103,31 +141,35 @@ public class Account {
         this.contract = contract;
     }
 
-    public Calendar getExpireTime() {
-        return expireTime;
-    }
-
-    public void setExpireTime(Calendar expireTime) {
-        this.expireTime = expireTime;
-    }
-
-    public Owner getOwner() {
+    public OperationalOwner getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(OperationalOwner owner) {
         this.owner = owner;
     }
 
-    public void setCredit(long credit) {
-        this.credit = credit;
+    public List<Transaction> getInTransactions() {
+        return inTransactions;
     }
 
-    public long getCredit() {
-        return credit;
+    public void setInTransactions(List<Transaction> inTransactions) {
+        this.inTransactions = inTransactions;
     }
 
-    public void addTransaction(Transaction transaction){
-        transactions.add(transaction);
+    public List<Transaction> getOutTransactions() {
+        return outTransactions;
+    }
+
+    public void setOutTransactions(List<Transaction> outTransactions) {
+        this.outTransactions = outTransactions;
+    }
+
+    public void addInTransaction(Transaction transaction) {
+        this.inTransactions.add(transaction);
+    }
+
+    public void addOutTransaction(Transaction transaction) {
+        this.outTransactions.add(transaction);
     }
 }

@@ -2,12 +2,20 @@ package ir.co.pna.exchange.emum;
 
 public enum ContractStatus {
     NONE,
-    NOT_CHARGED, // money is not in exchanger account
-    CHARGED, // money is in exchanger account
-    PAYED, // exchanger has payed money to exporter
-    CLAIMED,
-    SUCCESSFUL,
-    SEMI_SUCCESSFUL,
-    FAILED,
-    UNKNOWN, // will be automatically set by system
+    WAITING_FOR_EXCHANGER_ACCEPTANCE,
+    WAITING_FOR_EXPORTER_ACCEPTANCE,
+    WAITING_FOR_IMPORTER_PAYMENT,
+    WAITING_FOR_EXCHANGER_PAYMENT,
+    REJECTED_BY_EXCHANGER,
+    REJECTED_BY_EXPORTER,
+    DOING_BY_EXCHANGER,
+    DOING_BY_EXPORTER,
+    WAITING_FOR_IMPORTER_CONFIRMATION,
+    WAITING_FOR_EXCHANGER_CONFIRMATION,
+    WAITING_FOR_PARENT,
+    CONFIRMED_BY_EXCHANGER,
+    DENIED_BY_EXCHANGER,
+    CONFIRMED_BY_IMPORTER,
+    CLAIMED_BY_IMPORTER,
+    JUDGED,
 }

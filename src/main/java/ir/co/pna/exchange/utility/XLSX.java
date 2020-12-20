@@ -39,22 +39,22 @@ public class XLSX {
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
                     switch (cell.getCellType()) {
-                        case STRING -> {
+                        case STRING:
 //                            System.out.print(cell.getStringCellValue() + "\t\t\t");
                             String cellObj = cell.getStringCellValue();
                             rowObj.add(cellObj);
                             rowIsNotEmpty = true;
+                            break;
 
 
-                        }
 
-                        case NUMERIC -> {
+                        case NUMERIC:
 //                            System.out.print(cell.getNumericCellValue() + "\t\t\t");
-                            Integer cellObj = (int) cell.getNumericCellValue();
-                            rowObj.add(cellObj);
+                            Integer cellObj2 = (int) cell.getNumericCellValue();
+                            rowObj.add(cellObj2);
                             rowIsNotEmpty = true;
+                            break;
 
-                        }
                     }
                 }
 

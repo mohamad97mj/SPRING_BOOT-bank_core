@@ -3,30 +3,30 @@ package ir.co.pna.exchange.entity;
 
 import ir.co.pna.exchange.emum.TransactionOperatorType;
 import ir.co.pna.exchange.emum.TransactionType;
+import ir.co.pna.exchange.utility.GlobalConstant;
 
 import javax.persistence.*;
 
 @Entity
-@DiscriminatorValue("onesideinternaltransaction")
-public class OneSideInternalTransaction extends Transaction{
+@DiscriminatorValue("one_side_internal_transaction")
+public class OneSideInternalTransaction extends Transaction {
 
-    @ManyToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "src_owner_bank_account_id")
-    private Owner src;
+    private PublicOwner src;
 
-    public OneSideInternalTransaction(){
+
+    public OneSideInternalTransaction() {
 
     }
 
-    public OneSideInternalTransaction(int id, User operator, TransactionOperatorType operatorType, TransactionType transactionType, Owner src, Account dst, long value) {
-        super(id, operator, operatorType, transactionType, value, dst);
-        src.addOneSideInternalTransactions(this);
-        this.src = src;
+    public OneSideInternalTransaction(NormalContract normalContract, User operator, TransactionOperatorType operatorType, TransactionType transactionType, long date) {
+        super(normalContract, operator, operatorType, transactionType, normalContract.getValueInRial(), normalContract.getExchangerAccount(), date);
+        GlobalConstant.operationalExchangerOwner.addOneSideInternalTransactions(this);
+        this.src = normalContract.getSrcPublicOwner();
     }
 
-    public Owner getSrc() {
+    public PublicOwner getSrc() {
         return src;
     }
 

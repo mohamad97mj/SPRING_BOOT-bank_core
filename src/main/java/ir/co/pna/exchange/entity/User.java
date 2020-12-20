@@ -1,6 +1,7 @@
 package ir.co.pna.exchange.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,13 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "myuser")
-@JsonIgnoreProperties({"owners", "transactions"})
-public class User {
-
-    @Id
-    @Column(name = "national_code")
-    @JsonProperty("national_code")
-    private long nationalCode;
+@JsonIgnoreProperties({"publicOwners", "transactions", "id"})
+public class User extends NormalUser{
 
     @Column(name = "first_name")
     @JsonProperty("first_name")
@@ -26,60 +22,61 @@ public class User {
     @JsonProperty("last_name")
     private String lastName;
 
-    @ManyToMany(fetch= FetchType.LAZY,
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "owner_user",
-            joinColumns = @JoinColumn(name = "user_national_code"),
-            inverseJoinColumns = @JoinColumn(name = "owner_bank_account_id")
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "users"
     )
-    private List<Owner> owners;
+    private List<PublicOwner> publicOwners;
 
 
-    @OneToMany(mappedBy = "operator", fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToMany(
+            mappedBy = "operator",
+            fetch = FetchType.LAZY,
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
     List<Transaction> transactions;
 
 
-    private void init(){
-        owners = new ArrayList<Owner>();
+    private void init() {
+        publicOwners = new ArrayList<PublicOwner>();
     }
 
 
-    public User(){
+    public User() {
 
     }
 
 
-
-    public User(String firstName, String lastName, String strNationalCode) {
+    public User(String firstName, String lastName, String id) {
         init();
 
         this.firstName = firstName;
         this.lastName = lastName;
-        this.nationalCode = Long.parseUnsignedLong(strNationalCode);
+        this.id = id;
     }
 
-    public void own (Owner owner) {
-        this.owners.add(owner);
+    public void own(PublicOwner publicOwner) {
+        this.publicOwners.add(publicOwner);
+    }
+
+    //custom serializing ...............................................................................................
+
+    @JsonGetter("national_code")
+    public String getNationalCode() {
+        return getId();
     }
 
 
     // getters and setters .............................................................................................
 
 
-    public long getNationalCode() {
-        return nationalCode;
-    }
-
-    public List<Owner> getOwners() {
-        return owners;
-    }
-
-    public void setOwners(ArrayList<Owner> listOfOwners) {
-        this.owners = listOfOwners;
+    public void setId(String nationalCode) {
+        this.id = nationalCode;
     }
 
     public String getFirstName() {
@@ -98,13 +95,20 @@ public class User {
         this.lastName = lastName;
     }
 
+    public List<PublicOwner> getPublicOwners() {
+        return publicOwners;
+    }
+
+    public void setPublicOwners(List<PublicOwner> publicOwners) {
+        this.publicOwners = publicOwners;
+    }
+
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
-    public void setNationalCode(long nationalCode) {
-        this.nationalCode = nationalCode;
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
-
 
 }

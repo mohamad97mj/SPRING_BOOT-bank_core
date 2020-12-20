@@ -1,6 +1,6 @@
 package ir.co.pna.exchange.emum;
 
 public enum TransactionOperatorType {
-    NORMAL,
+    NORMAL_USER,
     ADMIN,
 }

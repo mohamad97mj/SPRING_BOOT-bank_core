@@ -1,55 +1,72 @@
 package ir.co.pna.exchange.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.co.pna.exchange.emum.TransactionOperatorType;
 import ir.co.pna.exchange.emum.TransactionType;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "transaction")
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(value = "transaction")
 public abstract class Transaction {
-
     @Id
     @Column(name = "transaction_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-
-    @Column(name = "operator_type")
-    private TransactionOperatorType operatorType;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "operator_national_code")
-    private User operator;
-
-    @Column(name = "transaction_type")
-    private TransactionType type;
 
     @Column(name = "amount")
     private long amount;
 
+    @Column(name = "transaction_type")
+    private TransactionType transactionType;
+
+    @Column(name = "operator_type")
+    private TransactionOperatorType operatorType;
+
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(name = "operator_id")
+    private NormalUser operator;
+
+    @Column(name = "date")
+    @JsonProperty("date")
+    private long date;
+
 //    TODO to change this many to many to two one to many
 
-    @ManyToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "src_account_id")
     protected Account srcAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "dst_account_id")
     protected Account dstAccount;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "external_transaction_id")
+    @OneToOne(
+            mappedBy = "internalTransaction",
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
     private ExternalTransaction externalTransaction;
+
+
 
 
     private void init() {
@@ -59,17 +76,18 @@ public abstract class Transaction {
 
     }
 
-    public Transaction(int id, User operator, TransactionOperatorType operatorType, TransactionType transactionType, long amount, Account dst) {
+    public Transaction(Contract contract, NormalUser operator, TransactionOperatorType operatorType, TransactionType transactionType, long amount, Account dst, long date) {
 
         init();
 
-        this.id = id;
+        this.contract = contract;
         this.operator = operator;
         this.operatorType = operatorType;
-        this.type = transactionType;
+        this.transactionType = transactionType;
         this.amount = amount;
+        this.date = date;
 
-        dst.addTransaction(this);
+        dst.addInTransaction(this);
         this.dstAccount = dst;
     }
 
@@ -84,12 +102,24 @@ public abstract class Transaction {
         return id;
     }
 
-    public TransactionType getType() {
-        return type;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getAmount() {
         return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType type) {
+        this.transactionType = type;
     }
 
     public TransactionOperatorType getOperatorType() {
@@ -100,7 +130,7 @@ public abstract class Transaction {
         this.operatorType = operatorType;
     }
 
-    public User getOperator() {
+    public NormalUser getOperator() {
         return operator;
     }
 
@@ -108,15 +138,39 @@ public abstract class Transaction {
         this.operator = operator;
     }
 
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public Account getSrcAccount() {
+        return srcAccount;
+    }
+
+    public void setSrcAccount(Account srcAccount) {
+        this.srcAccount = srcAccount;
+    }
+
+    public Account getDstAccount() {
+        return dstAccount;
+    }
+
+    public void setDstAccount(Account dstAccount) {
+        this.dstAccount = dstAccount;
+    }
+
     public ExternalTransaction getExternalTransaction() {
         return externalTransaction;
     }
 
-    public Account getDst() {
-        return dstAccount;
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Contract getContract() {
+        return contract;
     }
 }

@@ -7,14 +7,14 @@ import java.util.ArrayList;
 
 public class Log {
 
-    public static void printRegisteredOwners(ArrayList<Owner> owners) {
+    public static void printRegisteredOwners(ArrayList<PublicOwner> publicOwners) {
         System.out.println("owners are:");
-        for (Owner owner : owners) {
-            System.out.println("  - bankAccountID: " + owner.getBankAccountId()
-                    + ", ownerType: " + owner.getOwnerType());
+        for (PublicOwner publicOwner : publicOwners) {
+            System.out.println("  - bankAccountID: " + publicOwner.getBankAccountId()
+                    + ", ownerType: " + publicOwner.getOwnerType());
             System.out.println("    * list of users: ");
-            for (User user : owner.getUsers()) {
-                System.out.println("      + nationalCode: " + user.getNationalCode());
+            for (User user : publicOwner.getUsers()) {
+                System.out.println("      + nationalCode: " + user.getId());
             }
         }
     }
@@ -24,11 +24,11 @@ public class Log {
         for (User user : users) {
             System.out.println("  - firstName: " + user.getFirstName()
                     + ", lastName: " + user.getLastName()
-                    + ", nationalCode: " + user.getNationalCode());
+                    + ", nationalCode: " + user.getId());
 
             System.out.println("    * list of owners: ");
-            for (Owner owner : user.getOwners()) {
-                System.out.println("      + bankAccountID: " + owner.getBankAccountId());
+            for (PublicOwner publicOwner : user.getPublicOwners()) {
+                System.out.println("      + bankAccountID: " + publicOwner.getBankAccountId());
             }
         }
     }
@@ -37,7 +37,7 @@ public class Log {
         System.out.println("judges are:");
         for (Judge judge : judges) {
             System.out.println("  - name: " + judge.getName()
-                    + ", nationalId: " + judge.getNationalId());
+                    + ", nationalId: " + judge.getId());
             System.out.println("    * list of normalContracts:");
             for (NormalContract normalContract : judge.getNormalContracts()) {
                 System.out.println("      + id: " + normalContract.getId());
@@ -50,20 +50,19 @@ public class Log {
         for (NormalContract normalContract : normalContracts) {
             System.out.println("  - id: " + normalContract.getId()
                     + ", settlementType: " + normalContract.getSettlementType()
-                    + ", srcOwner: " + normalContract.getSrcOwner().getBankAccountId()
-                    + ", dstOwner: " + normalContract.getDstOwner().getBankAccountId()
-                    + ", judge: " + normalContract.getJudge().getNationalId()
-                    + ", expireDate: " + normalContract.getExpireDate().getTime()
+                    + ", srcOwner: " + normalContract.getSrcPublicOwner().getBankAccountId()
+                    + ", dstOwner: " + normalContract.getDstPublicOwner().getBankAccountId()
+                    + ", judge: " + normalContract.getJudge().getId()
+                    + ", expireDate: " + normalContract.getExpireDate()
                     + ", valueInRial: " + normalContract.getValueInRial()
                     + ", remittanceValue: " + normalContract.getRemittanceValue()
                     + ", remittanceCurrency: " + normalContract.getRemittanceCurrency()
                     + ", description: " + normalContract.getDescription()
                     + ", exchangerAccount: " + normalContract.getExchangerAccount().getId()
                     + ", returnAccount: " + normalContract.getReturnAccount().getId()
-                    + ", claimAccount: " + normalContract.getClaimAccount().getId()
             );
             System.out.println("    * list of subContracts: ");
-            for (SubContract subContract : normalContract.getSubContracts()) {
+            for (Subcontract subContract : normalContract.getSubcontracts()) {
                 System.out.println("      + id: " + subContract.getId());
             }
         }
@@ -77,25 +76,24 @@ public class Log {
                     + ", accountType: " + account.getType()
                     + ", owner: " + account.getOwner().getBankAccountId()
                     + ", contract: " + account.getContract().getId()
-                    + ", expireDate: " + account.getExpireTime().getTime()
+                    + ", expireDate: " + account.getExpireTime()
                     + ", credit: " + account.getCredit());
         }
     }
 
-    public static void printSubContracts(ArrayList<SubContract> subContracts) {
+    public static void printSubContracts(ArrayList<Subcontract> subcontracts) {
 
         System.out.println("subContracts are:");
-        for (SubContract subcontract : subContracts) {
+        for (Subcontract subcontract : subcontracts) {
             System.out.println("  - id: " + subcontract.getId()
                     + ", parent: " + subcontract.getParent().getId()
-                    + ", srcOwner: " + subcontract.getSrcOwner().getBankAccountId()
-                    + ", dstOwner: " + subcontract.getDstOwner().getBankAccountId()
-                    + ", expireDate: " + subcontract.getExpireDate().getTime()
+                    + ", srcOwner: " + subcontract.getParent().getSrcPublicOwner().getBankAccountId()
+                    + ", dstOwner: " + subcontract.getDstPublicOwner().getBankAccountId()
+                    + ", expireDate: " + subcontract.getExpireDate()
                     + ", valueInRial: " + subcontract.getValueInRial()
                     + ", remittanceValue: " + subcontract.getRemittanceValue()
                     + ", description: " + subcontract.getDescription()
                     + ", exporterAccount: " + subcontract.getExporterAccount().getId()
-                    + ", returnAccount: " + subcontract.getReturnAccount().getId()
                     + ", claimAccount: " + subcontract.getClaimAccount().getId()
             );
         }
@@ -104,7 +102,7 @@ public class Log {
     public static void printJudgesVotes(ArrayList<NormalContract> normalContracts) {
         for (NormalContract normalContract : normalContracts) {
             System.out.println("judgesVotes are:");
-            System.out.println("  - contractId: " + normalContract.getId() + ", judge: " + normalContract.getJudge().getNationalId() + ", status: " + normalContract.getContractStatus());
+            System.out.println("  - contractId: " + normalContract.getId() + ", judge: " + normalContract.getJudge().getId() + ", status: " + normalContract.getStatus());
         }
     }
 
@@ -112,12 +110,12 @@ public class Log {
         System.out.println("internal transactions are:");
         for (Transaction transaction : internalTransactions) {
             System.out.println("  - id: " + transaction.getId()
-                    + ", operator: " + transaction.getOperator().getNationalCode()
+                    + ", operator: " + transaction.getOperator().getId()
                     + ", operatorType: " + transaction.getOperatorType()
                     + ", transactionClassType: " + ((transaction instanceof InternalTransaction) ? "internal" : (transaction instanceof OneSideInternalTransaction) ? "externalIn" : "externalOut")
-                    + ", transactionType: " + transaction.getType()
-                    + ((transaction instanceof InternalTransaction) ? ", srcAccount: " + ((InternalTransaction) transaction).getSrc().getId() : ", srcOwner: " + ((OneSideInternalTransaction) transaction).getSrc().getBankAccountId())
-                    + ", dstAccount: "  + ((transaction instanceof InternalTransaction) ? + ((InternalTransaction) transaction).getDst().getId() :  + ((OneSideInternalTransaction) transaction).getDst().getId())
+                    + ", transactionType: " + transaction.getTransactionType()
+                    + ((transaction instanceof InternalTransaction) ? ", srcAccount: " + ((InternalTransaction) transaction).getSrcAccount().getId() : ", srcOwner: " + ((OneSideInternalTransaction) transaction).getSrc().getBankAccountId())
+                    + ", dstAccount: "  + ((transaction instanceof InternalTransaction) ? + ((InternalTransaction) transaction).getDstAccount().getId() :  + ((OneSideInternalTransaction) transaction).getDstAccount().getId())
                     + ", amount: " + transaction.getAmount()
 
             );
@@ -128,8 +126,8 @@ public class Log {
         System.out.println("external transactions are:");
         for (ExternalTransaction transaction : externalTransactions) {
             System.out.println("  - bankTransactionId: " + transaction.getBankTransactionId()
-                    + ", src: " + transaction.getSrc().getBankAccountId()
-                    + ", dst: " + transaction.getDst().getBankAccountId()
+                    + ", src: " + transaction.getInternalTransaction().getSrcAccount().getOwner().getBankAccountId()
+                    + ", dst: " + transaction.getInternalTransaction().getDstAccount().getOwner().getBankAccountId()
                     + ", internalTransaction: " + transaction.getInternalTransaction().getId()
                     + ", amount: " + transaction.getInternalTransaction().getAmount()
 
