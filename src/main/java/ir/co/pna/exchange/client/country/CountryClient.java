@@ -20,7 +20,7 @@ public class CountryClient extends WebServiceGatewaySupport {
 		GetCountryResponse response = (GetCountryResponse) getWebServiceTemplate()
 				.marshalSendAndReceive("http://localhost:8080/ws/countries", request,
 						new SoapActionCallback(
-								"http://localhost:8080/GetCountryRequest"));
+								""));
 
 		return response;
 	}
