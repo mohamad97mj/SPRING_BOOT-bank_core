@@ -38,7 +38,7 @@ public class SmsClient extends WebServiceGatewaySupport {
         log.info("Requesting sms for " + mobileNo);
 
         SendSMSResponse response = (SendSMSResponse) getWebServiceTemplate()
-                .marshalSendAndReceive("http://10.0.32.43/SendSMS.asmx", request, new SoapActionCallback(""));
+                .marshalSendAndReceive("http://10.0.32.43/SendSMS.asmx", request, new SoapActionCallback("http://tempuri.org/SendSMS"));
 
         return response;
     }
