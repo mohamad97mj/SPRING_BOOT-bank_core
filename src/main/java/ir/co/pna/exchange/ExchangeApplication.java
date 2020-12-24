@@ -57,7 +57,7 @@ public class ExchangeApplication {
             String destinationComment = "واریز به حساب";
             String sourceComment = "برداشت از حساب";
 
-            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(shahsavaniUsername, shahsavaniPassword, shahsavaniDepositNo, mojahedDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(shahsavaniUsername, shahsavaniPassword, shahsavaniDepositNo, tavalaeeDepositNo, amount, destinationComment, sourceComment);
             System.out.println(transferResponse.toString());
             System.err.println(transferResponse.getNormalTransferResult());
         };
