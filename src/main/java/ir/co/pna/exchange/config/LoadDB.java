@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static ir.co.pna.exchange.utility.GlobalConstant.*;
 
-@Configuration
+//@Configuration
 class LoadDatabase {
 
     private ArrayList<PublicOwner> publicOwners;

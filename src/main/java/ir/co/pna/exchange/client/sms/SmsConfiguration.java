@@ -1,4 +1,5 @@
 package ir.co.pna.exchange.client.sms;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -6,7 +7,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 @Configuration
 public class SmsConfiguration {
 
-    @Bean
+    @Bean(name = "smsMarshaller")
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 //		 this package must match the package in the <generatePackage> specified in
@@ -16,7 +17,7 @@ public class SmsConfiguration {
     }
 
     @Bean
-    public SmsClient countryClient(Jaxb2Marshaller marshaller) {
+    public SmsClient smsClient(@Qualifier("smsMarshaller") Jaxb2Marshaller marshaller) {
         SmsClient client = new SmsClient();
         client.setDefaultUri("http://10.0.32.43/SendSMS.asmx");
         client.setMarshaller(marshaller);

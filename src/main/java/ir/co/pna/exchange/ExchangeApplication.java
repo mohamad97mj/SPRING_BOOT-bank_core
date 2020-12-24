@@ -23,6 +23,7 @@ public class ExchangeApplication {
     @Bean
     CommandLineRunner lookup(SmsClient quoteClient) {
         return args -> {
+            System.out.println("hello there");
             String mobileNo = "09059242876";
             String message = "hello";
             SMSGateway gateway = SMSGateway.ADVERTISEMENT;
