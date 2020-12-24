@@ -57,9 +57,12 @@ public class ExchangeApplication {
             String destinationComment = "واریز به حساب";
             String sourceComment = "برداشت از حساب";
 
-            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(yaghliUsername, yaghliPassword, yaghliDepositNo, shahsavaniDepositNo, amount, destinationComment, sourceComment);
-            System.out.println(transferResponse.toString());
-            System.err.println(transferResponse.getNormalTransferResult());
+            NormalTransferResponse transferResponse1 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, shahsavaniDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse2 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, mojahedDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse3 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, yaghliDepositNo, amount, destinationComment, sourceComment);
+            System.err.println(transferResponse1.getNormalTransferResult());
+            System.err.println(transferResponse2.getNormalTransferResult());
+            System.err.println(transferResponse3.getNormalTransferResult());
         };
     }
 }
