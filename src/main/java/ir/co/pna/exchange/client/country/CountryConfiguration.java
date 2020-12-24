@@ -1,4 +1,4 @@
-package ir.co.pna.exchange.client.country;//
+package ir.co.pna.exchange.client.country;
 //
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -27,3 +27,4 @@ public class CountryConfiguration {
 	}
 
 }
+

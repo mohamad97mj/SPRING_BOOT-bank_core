@@ -1,4 +1,4 @@
-package ir.co.pna.exchange.client.country;//
+package ir.co.pna.exchange.client.country;
 import ir.co.pna.exchange.client.country.generated_resources.GetCountryRequest;
 import ir.co.pna.exchange.client.country.generated_resources.GetCountryResponse;
 import org.slf4j.Logger;
@@ -19,8 +19,7 @@ public class CountryClient extends WebServiceGatewaySupport {
 
 		GetCountryResponse response = (GetCountryResponse) getWebServiceTemplate()
 				.marshalSendAndReceive("http://localhost:8080/ws/countries", request,
-						new SoapActionCallback(
-								""));
+						new SoapActionCallback(""));
 
 		return response;
 	}

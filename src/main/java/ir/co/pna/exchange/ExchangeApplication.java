@@ -5,11 +5,14 @@ import ir.co.pna.exchange.client.country.generated_resources.GetCountryResponse;
 import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
+import ir.co.pna.exchange.client.yaghut.YaghutClient;
+import ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 @SpringBootApplication
@@ -21,40 +24,30 @@ public class ExchangeApplication {
     }
 
     @Bean
-    CommandLineRunner lookup(SmsClient quoteClient) {
+    CommandLineRunner lookup(SmsClient smsClient, YaghutClient yaghutClient) {
         return args -> {
-            System.out.println("hello there");
-            String mobileNo = "09365262198";
-            String message = "زی زی کوچولو، کوچول موچولو";
+            System.out.println("application started");
+            String mobileNo = "09059242876";
+            String message = "this is a message for test";
             SMSGateway gateway = SMSGateway.ADVERTISEMENT;
             String serviceName = "mojahed service";
 
-            SendSMSResponse response = quoteClient.sendSms(mobileNo, message, gateway, serviceName);
+            SendSMSResponse smsResponse = smsClient.sendSms(mobileNo, message, gateway, serviceName);
+            System.out.println(smsResponse.toString());
+            System.err.println(smsResponse.getSendSMSResult());
 
 
-            String mobileNo3 = "09027237097";
-            String message3 = "معاونت محترم طرح و برنامه بانک اقتصاد نوین جناب آقای تولایی با سلام، احتراما به اطلاع می رساند با توجه به استعفای آقای سید محمد حسینی مجاهد از شرکت پرداخت نوین و عدم پایبندی به ددلاین های مشخص شده عدم تمایل شرکت پرداخت نوین به ادامه پروژه سامانه صراقی نوین را اعلام میداریم.";
-            SMSGateway gateway3 = SMSGateway.ADVERTISEMENT;
-            String serviceName3 = "mojahed service";
+            String username = "6471174";
+            String password = "55014205";
+            String sourceDepositNo = "159-701-6471174-1";
+            String destinationDepositNo = "151-701-6113835-1";
+            BigDecimal amount = new BigDecimal(10000);
+            String destinationComment = "واریز به حساب";
+            String sourceComment = "برداشت از حساب";
 
-            SendSMSResponse response3 = quoteClient.sendSms(mobileNo3, message3, gateway3, serviceName3);
-
-
-
-            String mobileNo2 = "09027237097";
-            String message2 = "سلام رییس مجاهد... دیدی بالاخره بعد از هفت خوان رستم این وامونده رو راه انداختم:))";
-            SMSGateway gateway2 = SMSGateway.ADVERTISEMENT;
-            String serviceName2 = "mojahed service";
-
-            SendSMSResponse response2 = quoteClient.sendSms(mobileNo2, message2, gateway2, serviceName2);
-
-
-            System.out.println(response.toString());
-            System.err.println(response.getSendSMSResult());
-            System.out.println(response2.toString());
-            System.err.println(response2.getSendSMSResult());
-            System.out.println(response3.toString());
-            System.err.println(response3.getSendSMSResult());
+            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(username, password, sourceDepositNo, destinationDepositNo, amount, destinationComment, sourceComment);
+            System.out.println(transferResponse.toString());
+            System.err.println(transferResponse.getNormalTransferResult());
         };
     }
 }

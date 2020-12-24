@@ -1,7 +1,4 @@
 package ir.co.pna.exchange.client.sms;
-
-import ir.co.pna.exchange.client.country.generated_resources.GetCountryRequest;
-import ir.co.pna.exchange.client.country.generated_resources.GetCountryResponse;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMS;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
@@ -10,18 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-
-//@XmlElement(name = "MobileNo")
-//protected String mobileNo;
-//@XmlElement(name = "Message")
-//protected String message;
-//@XmlElement(name = "Gateway", required = true)
-//@XmlSchemaType(name = "string")
-//protected SMSGateway gateway;
-//@XmlElement(name = "ServiceName")
-//protected String serviceName;
 
 public class SmsClient extends WebServiceGatewaySupport {
 

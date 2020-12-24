@@ -9,7 +9,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="Gateway" type="tns:SMS_Gateway" />
             <s:element minOccurs="0" maxOccurs="1" name="ServiceName" type="s:string" />
-          </s:sequence>‍
+          </s:sequence>
         </s:complexType>
       </s:element>
       <s:simpleType name="SMS_Gateway">
@@ -110,10 +110,10 @@
   </wsdl:binding>
   <wsdl:service name="SendSMS">
     <wsdl:port name="SendSMSSoap" binding="tns:SendSMSSoap">
-      <soap:address location="http://localhost:8091/SendSMS.asmx" />
+      <soap:address location="http://10.0.32.43/SendSMS.asmx" />
     </wsdl:port>
     <wsdl:port name="SendSMSSoap12" binding="tns:SendSMSSoap12">
-      <soap12:address location="http://localhost:8091/SendSMS.asmx" />
+      <soap12:address location="http://10.0.32.43/SendSMS.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

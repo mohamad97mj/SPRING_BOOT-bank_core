@@ -134,27 +134,27 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!--            <plugin>-->
-            <!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
-            <!--                <artifactId>maven-jaxb2-plugin</artifactId>-->
-            <!--                <version>0.14.0</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <goals>-->
-            <!--                            <goal>generate</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--                <configuration>-->
-            <!--                    <schemaLanguage>WSDL</schemaLanguage>-->
-            <!--                    <generateDirectory>${project.basedir}/src/main/java</generateDirectory>-->
-            <!--                    <generatePackage>ir.co.pna.exchange.client.yaghut.generated_resources</generatePackage>-->
-            <!--                    <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>-->
-            <!--                    <schemaIncludes>-->
-            <!--                        <include>EnbankYaghutService.wsdl</include>-->
-            <!--                    </schemaIncludes>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
+<!--                        <plugin>-->
+<!--                            <groupId>org.jvnet.jaxb2.maven2</groupId>-->
+<!--                            <artifactId>maven-jaxb2-plugin</artifactId>-->
+<!--                            <version>0.14.0</version>-->
+<!--                            <executions>-->
+<!--                                <execution>-->
+<!--                                    <goals>-->
+<!--                                        <goal>generate</goal>-->
+<!--                                    </goals>-->
+<!--                                </execution>-->
+<!--                            </executions>-->
+<!--                            <configuration>-->
+<!--                                <schemaLanguage>WSDL</schemaLanguage>-->
+<!--                                <generateDirectory>${project.basedir}/src/main/java</generateDirectory>-->
+<!--                                <generatePackage>ir.co.pna.exchange.client.yaghut.generated_resources</generatePackage>-->
+<!--                                <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>-->
+<!--                                <schemaIncludes>-->
+<!--                                    <include>EnbankYaghutService.wsdl</include>-->
+<!--                                </schemaIncludes>-->
+<!--                            </configuration>-->
+<!--                        </plugin>-->
 
 <!--            <plugin>-->
 <!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
