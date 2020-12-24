@@ -37,15 +37,27 @@ public class ExchangeApplication {
             System.err.println(smsResponse.getSendSMSResult());
 
 
-            String username = "6471174";
-            String password = "55014205";
-            String sourceDepositNo = "159-701-6471174-1";
-            String destinationDepositNo = "151-701-6113835-1";
-            BigDecimal amount = new BigDecimal(10000);
+            String mojahedUsername = "6471174";
+            String mojahedPassword = "55014205";
+            String mojahedDepositNo = "159-701-6471174-1";
+
+            String tavalaeeUsername = "matavallaie";
+            String tavalaeePassword = "36325045";
+            String tavalaeeDepositNo = "151-701-6113835-1";
+
+            String yaghliUsername = "payamyaghli";
+            String yaghliPassword = "81750304";
+            String yaghliDepositNo = "104-701-121924-1";
+
+            String shahsavaniUsername = "da97349734";
+            String shahsavaniPassword = "85438083";
+            String shahsavaniDepositNo = "147-1-4681241-1";
+
+            BigDecimal amount = new BigDecimal(1000);
             String destinationComment = "واریز به حساب";
             String sourceComment = "برداشت از حساب";
 
-            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(username, password, destinationDepositNo, sourceDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(yaghliUsername, yaghliPassword, yaghliDepositNo, shahsavaniDepositNo, amount, destinationComment, sourceComment);
             System.out.println(transferResponse.toString());
             System.err.println(transferResponse.getNormalTransferResult());
         };
