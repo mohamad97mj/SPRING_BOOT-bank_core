@@ -2,6 +2,9 @@ package ir.co.pna.exchange;
 
 import ir.co.pna.exchange.client.country.CountryClient;
 import ir.co.pna.exchange.client.country.generated_resources.GetCountryResponse;
+import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
+import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,24 +21,16 @@ public class ExchangeApplication {
     }
 
     @Bean
-    CommandLineRunner lookup(CountryClient quoteClient) {
+    CommandLineRunner lookup(SmsClient quoteClient) {
         return args -> {
-            String country = "Spain";
+            String mobileNo = "09059242876";
+            String message = "hello";
+            SMSGateway gateway = SMSGateway.ADVERTISEMENT;
+            String serviceName = "mojahed service";
 
-            if (args.length > 0) {
-                country = args[0];
-            }
-            GetCountryResponse response = quoteClient.getCountry(country);
+            SendSMSResponse response = quoteClient.sendSms(mobileNo, message, gateway, serviceName);
             System.out.println(response.toString());
-            System.err.println(response.getCountry().getPopulation());
-            System.err.println(response.getCountry().getCurrency());
-            System.err.println(response.getCountry().getName());
+            System.err.println(response.getSendSMSResult());
         };
     }
-
-//    @Override
-//    public void run(ApplicationArguments arg0) throws Exception {
-//        System.out.println("hello");
-//    }
-
 }
