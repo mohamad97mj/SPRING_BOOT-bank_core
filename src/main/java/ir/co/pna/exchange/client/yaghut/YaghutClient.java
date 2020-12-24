@@ -24,7 +24,7 @@ public class YaghutClient extends WebServiceGatewaySupport {
         request.setDestinationComment(destinationComment);
         request.setSourceComment(sourceComment);
 
-        log.info("Requesting transfer for " + sourceDepositNo);
+        log.info("Requesting transfer from " + sourceDepositNo + "to " + destinationDepositNo);
 
         NormalTransferResponse response = (NormalTransferResponse) getWebServiceTemplate()
                 .marshalSendAndReceive("http://10.0.78.29/enbankyaghut/EnbankYaghutService.asmx", request, new SoapActionCallback("http://tempuri.org/NormalTransfer"));
