@@ -39,10 +39,8 @@ public class ExchangeApplication {
 
             String username = "6471174";
             String password = "55014205";
-//            String sourceDepositNo = "159-701-6471174-1";
-            String sourceDepositNo = "1570164711741";
-//            String destinationDepositNo = "151-701-6113835-1";
-            String destinationDepositNo = "15170161138351";
+            String sourceDepositNo = "159-701-6471174-1";
+            String destinationDepositNo = "151-701-6113835-1";
             BigDecimal amount = new BigDecimal(10000);
             String destinationComment = "واریز به حساب";
             String sourceComment = "برداشت از حساب";
