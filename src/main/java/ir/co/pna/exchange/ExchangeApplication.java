@@ -57,9 +57,9 @@ public class ExchangeApplication {
             String destinationComment = "واریز به حساب";
             String sourceComment = "برداشت از حساب";
 
-            NormalTransferResponse transferResponse1 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, shahsavaniDepositNo, amount, destinationComment, sourceComment);
-            NormalTransferResponse transferResponse2 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, mojahedDepositNo, amount, destinationComment, sourceComment);
-            NormalTransferResponse transferResponse3 = yaghutClient.normalTransfer(tavalaeeUsername, tavalaeePassword, tavalaeeDepositNo, yaghliDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse1 = yaghutClient.normalTransfer(mojahedUsername, mojahedPassword, mojahedDepositNo, shahsavaniDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse2 = yaghutClient.normalTransfer(mojahedUsername, mojahedPassword, mojahedDepositNo, tavalaeeDepositNo, amount, destinationComment, sourceComment);
+            NormalTransferResponse transferResponse3 = yaghutClient.normalTransfer(mojahedUsername, mojahedPassword, mojahedDepositNo, yaghliDepositNo, amount, destinationComment, sourceComment);
             System.err.println(transferResponse1.getNormalTransferResult());
             System.err.println(transferResponse2.getNormalTransferResult());
             System.err.println(transferResponse3.getNormalTransferResult());
