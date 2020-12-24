@@ -27,8 +27,8 @@ public class ExchangeApplication {
     CommandLineRunner lookup(SmsClient smsClient, YaghutClient yaghutClient) {
         return args -> {
             System.out.println("application started");
-            String mobileNo = "09059242876";
-            String message = "this is a message for test";
+            String mobileNo = "09193836643";
+            String message = "... ..";
             SMSGateway gateway = SMSGateway.ADVERTISEMENT;
             String serviceName = "mojahed service";
 
@@ -37,29 +37,29 @@ public class ExchangeApplication {
             System.err.println(smsResponse.getSendSMSResult());
 
 
-            String mojahedUsername = "6471174";
-            String mojahedPassword = "55014205";
-            String mojahedDepositNo = "159-701-6471174-1";
-
-            String tavalaeeUsername = "matavallaie";
-            String tavalaeePassword = "36325045";
-            String tavalaeeDepositNo = "151-701-6113835-1";
-
-            String yaghliUsername = "payamyaghli";
-            String yaghliPassword = "81750304";
-            String yaghliDepositNo = "104-701-121924-1";
-
-            String shahsavaniUsername = "da97349734";
-            String shahsavaniPassword = "85438083";
-            String shahsavaniDepositNo = "147-1-4681241-1";
-
-            BigDecimal amount = new BigDecimal(1000);
-            String destinationComment = "واریز به حساب";
-            String sourceComment = "برداشت از حساب";
-
-            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(shahsavaniUsername, shahsavaniPassword, shahsavaniDepositNo, yaghliDepositNo, amount, destinationComment, sourceComment);
-            System.out.println(transferResponse.toString());
-            System.err.println(transferResponse.getNormalTransferResult());
+//            String mojahedUsername = "6471174";
+//            String mojahedPassword = "55014205";
+//            String mojahedDepositNo = "159-701-6471174-1";
+//
+//            String tavalaeeUsername = "matavallaie";
+//            String tavalaeePassword = "36325045";
+//            String tavalaeeDepositNo = "151-701-6113835-1";
+//
+//            String yaghliUsername = "payamyaghli";
+//            String yaghliPassword = "81750304";
+//            String yaghliDepositNo = "104-701-121924-1";
+//
+//            String shahsavaniUsername = "da97349734";
+//            String shahsavaniPassword = "85438083";
+//            String shahsavaniDepositNo = "147-1-4681241-1";
+//
+//            BigDecimal amount = new BigDecimal(1000);
+//            String destinationComment = "واریز به حساب";
+//            String sourceComment = "برداشت از حساب";
+//
+//            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(shahsavaniUsername, shahsavaniPassword, shahsavaniDepositNo, yaghliDepositNo, amount, destinationComment, sourceComment);
+//            System.out.println(transferResponse.toString());
+//            System.err.println(transferResponse.getNormalTransferResult());
         };
     }
 }
