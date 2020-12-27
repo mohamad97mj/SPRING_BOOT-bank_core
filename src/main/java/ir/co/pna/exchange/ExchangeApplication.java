@@ -74,21 +74,35 @@ public class ExchangeApplication {
             NormalTransferResponse transferResponse12 = yaghutClient.normalTransfer(mojahedUsername, mojahedPassword, mojahedDepositNo, tavalaeeDepositNo, amount, destinationComment, sourceComment);
 
 
-            System.out.println("yaghli to all:");
+
+            System.out.println("yaghli to shahsavani:");
             System.err.println(transferResponse1.getNormalTransferResult());
+            System.out.println("yaghli to tavalaee:");
             System.err.println(transferResponse2.getNormalTransferResult());
+            System.out.println("yaghli to mojahed:");
             System.err.println(transferResponse3.getNormalTransferResult());
-            System.out.println("shahsavani to all:");
+
+            System.out.println("shahsavani to yaghli");
             System.err.println(transferResponse4.getNormalTransferResult());
+            System.out.println("shahsavani to tavalaee");
             System.err.println(transferResponse5.getNormalTransferResult());
+            System.out.println("shahsavani to mojahed");
             System.err.println(transferResponse6.getNormalTransferResult());
-            System.out.println("tavalaee to all:");
+
+
+            System.out.println("tavalaee to yaghli");
             System.err.println(transferResponse7.getNormalTransferResult());
+            System.out.println("tavalaee to shahsavani");
             System.err.println(transferResponse8.getNormalTransferResult());
+            System.out.println("tavalaee to mojahed");
             System.err.println(transferResponse9.getNormalTransferResult());
-            System.out.println("mojahed to all:");
+
+
+            System.out.println("mojahed to yaghli");
             System.err.println(transferResponse10.getNormalTransferResult());
+            System.out.println("mojahed to shahsavani");
             System.err.println(transferResponse11.getNormalTransferResult());
+            System.out.println("mojahed to tavalaee");
             System.err.println(transferResponse12.getNormalTransferResult());
         };
     }
