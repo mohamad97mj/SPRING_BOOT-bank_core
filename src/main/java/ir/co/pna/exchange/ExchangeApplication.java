@@ -27,8 +27,8 @@ public class ExchangeApplication {
     CommandLineRunner lookup(SmsClient smsClient, YaghutClient yaghutClient) {
         return args -> {
             System.out.println("application started");
-            String mobileNo = "09059242876";
-            String message = "this is a test message";
+            String mobileNo = "09037859503";
+            String message = "نیماعووووو";
             SMSGateway gateway = SMSGateway.ADVERTISEMENT;
             String serviceName = "mojahed service";
 
