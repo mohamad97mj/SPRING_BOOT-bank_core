@@ -73,6 +73,9 @@ public class Subcontract extends Contract {
                 this.parent.exchangerAccount.decreaseCredit(this.valueInRial);
                 this.exporterAccount.increaseCredit(this.valueInRial);
 
+                //sms
+                // transfer
+
                 TransactionType transactionType = TransactionType.PAYMENT;
                 Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.parent.getExchangerAccount(), this.exporterAccount, this.valueInRial, Calendar.getInstance().getTimeInMillis());
                 ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  GlobalConstant.operationalExchangerOwner, GlobalConstant.operationalExporterOwner, Calendar.getInstance().getTimeInMillis());
@@ -96,6 +99,10 @@ public class Subcontract extends Contract {
 
         TransactionType transactionType = TransactionType.CLAIM;
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exporterAccount, this.claimAccount, value, Calendar.getInstance().getTimeInMillis());
+
+        //sms
+        // transfer
+
         return transaction;
     }
 
@@ -108,6 +115,10 @@ public class Subcontract extends Contract {
 
         TransactionType transactionType = TransactionType.JUDGEMENT_NOT_DONE;
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.parent.returnAccount, value, Calendar.getInstance().getTimeInMillis());
+
+        //sms
+        // transfer
+
         return transaction;
 
     }
@@ -122,6 +133,10 @@ public class Subcontract extends Contract {
 
         TransactionType transactionType = TransactionType.JUDGEMENT_DONE;
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.exporterAccount, value, Calendar.getInstance().getTimeInMillis());
+
+        //sms
+        // transfer
+
         return transaction;
     }
 
@@ -131,11 +146,15 @@ public class Subcontract extends Contract {
             this.judgeVote = vote;
             Transaction transaction = null;
             if (vote == JudgeVote.DONE) {
+
                 this.parent.numberOfSuccessfulSubcontracts++;
                 transaction =  returnFromClaim2Exporter(operatorType, operator);
                 ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalConstant.operationalClaimOwner, GlobalConstant.operationalExporterOwner, Calendar.getInstance().getTimeInMillis());
 
             } else {
+
+                //sms
+                // transfer
                 this.parent.numberOfFailedSubcontracts++;
                 transaction = returnFromClaim2Return(operatorType, operator);
                 ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  GlobalConstant.operationalClaimOwner, GlobalConstant.operationalReturnOwner, Calendar.getInstance().getTimeInMillis());

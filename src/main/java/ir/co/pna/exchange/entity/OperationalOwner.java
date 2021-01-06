@@ -10,19 +10,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@JsonIgnoreProperties({"accounts", "oneSideInternalTransactions", "users", "inExternalTransactions", "outExternalTransactions"})
-public class OperationalOwner extends Owner{
+@JsonIgnoreProperties({"ibUsername", "ibPassword", "mobileNumber" , "accounts", "oneSideInternalTransactions", "users", "inExternalTransactions", "outExternalTransactions"})
+public class OperationalOwner extends Owner {
+
+    @Column(name = "ib_username")
+    private String ibUsername;
+
+    @Column(name = "ib_password")
+    private String ibPassword;
+
+    @Column(name = "mobile_number")
+    protected String mobileNumber;
+
 
     private void init() {
         accounts = new ArrayList<>();
         oneSideInternalTransactions = new ArrayList<>();
     }
 
-    public OperationalOwner(){}
+    public OperationalOwner() {
+    }
 
     @JsonCreator
-    public OperationalOwner(String bankAccountId, OwnerType type) {
+    public OperationalOwner(String bankAccountId, OwnerType type, String ibUsername, String ibPassword, String mobileNumber) {
         super(bankAccountId, type);
+        this.ibUsername = ibUsername;
+        this.ibPassword = ibPassword;
+        this.mobileNumber = mobileNumber;
         init();
     }
 
@@ -76,4 +90,15 @@ public class OperationalOwner extends Owner{
         this.oneSideInternalTransactions.add(transaction);
     }
 
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public String getIbUsername() {
+        return ibUsername;
+    }
+
+    public String getIbPassword() {
+        return ibPassword;
+    }
 }

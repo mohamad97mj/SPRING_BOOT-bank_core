@@ -2,6 +2,9 @@ package ir.co.pna.exchange.entity;
 
 
 import com.fasterxml.jackson.annotation.*;
+import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
+import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalConstant;
@@ -18,6 +21,9 @@ public class NormalContract extends Contract {
 
 //    @Transient
 //    SubcontractService subContractService;
+
+    @Transient
+    SmsClient smsClient;
 
     @ManyToOne(
             fetch = FetchType.LAZY
@@ -156,6 +162,11 @@ public class NormalContract extends Contract {
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
+            String message = GlobalConstant.operationalExchangerOwner.getBankAccountId() + "واریز به حساب";
+            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+            System.out.println(smsResponse.toString());
+            System.err.println(smsResponse.getSendSMSResult());
+
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());
             ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  getSrcPublicOwner(), GlobalConstant.operationalExchangerOwner, Calendar.getInstance().getTimeInMillis());
@@ -171,6 +182,8 @@ public class NormalContract extends Contract {
             ExternalTransaction[] exTransaction = new ExternalTransaction[subcontracts.size()];
             this.status = ContractStatus.CLAIMED_BY_IMPORTER;
             this.judgeVote = JudgeVote.NOT_JUDGED;
+            //sms
+            //normal transfer
             for (int i = 0; i < subcontracts.size(); i++) {
                 transactions[i] = subcontracts.get(i).claim(operatorType, operator);
                 exTransaction[i] = new ExternalTransaction(0, transactions[i], GlobalConstant.operationalExporterOwner, GlobalConstant.operationalClaimOwner, Calendar.getInstance().getTimeInMillis());

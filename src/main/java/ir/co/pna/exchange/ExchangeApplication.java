@@ -86,14 +86,12 @@ public class ExchangeApplication {
             System.out.println("shahsavani to mojahed");
             System.err.println(transferResponse6.getNormalTransferResult());
 
-
             System.out.println("tavalaee to yaghli");
             System.err.println(transferResponse7.getNormalTransferResult());
             System.out.println("tavalaee to shahsavani");
             System.err.println(transferResponse8.getNormalTransferResult());
             System.out.println("tavalaee to mojahed");
             System.err.println(transferResponse9.getNormalTransferResult());
-
 
             System.out.println("mojahed to yaghli");
             System.err.println(transferResponse10.getNormalTransferResult());

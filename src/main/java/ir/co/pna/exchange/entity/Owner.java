@@ -21,7 +21,6 @@ public class Owner {
     @Column(name = "owner_type")
     protected OwnerType ownerType;
 
-
     @OneToMany(
             mappedBy = "dstOwner",
             fetch = FetchType.LAZY,
@@ -51,14 +50,14 @@ public class Owner {
         outExternalTransactions = new ArrayList<>();
     }
 
-    public Owner(String bankAccountId, OwnerType ownerType)
-    {
+    public Owner(String bankAccountId, OwnerType ownerType) {
         init();
         this.bankAccountId = bankAccountId;
         this.ownerType = ownerType;
     }
 
-    public Owner(){}
+    public Owner() {
+    }
 
 
     public void addInExternalTransactions(ExternalTransaction exTransaction) {
@@ -68,6 +67,7 @@ public class Owner {
     public void addOutExternalTransactions(ExternalTransaction exTransaction) {
         this.outExternalTransactions.add(exTransaction);
     }
+
     public List<ExternalTransaction> getInExternalTransactions() {
         return inExternalTransactions;
     }
@@ -85,8 +85,10 @@ public class Owner {
         this.bankAccountId = bankAccountId;
     }
 
-    public OwnerType getOwnerType(){
+    public OwnerType getOwnerType() {
         return this.ownerType;
-    }
 
+    }
 }
+
+
