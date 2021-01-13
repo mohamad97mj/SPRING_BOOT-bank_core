@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
+import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.emum.ContractStatus;
 import ir.co.pna.exchange.emum.JudgeVote;
@@ -76,11 +78,22 @@ public class Subcontract extends Contract {
                 this.exporterAccount.increaseCredit(this.valueInRial);
 
                 //sms
+                String message = "واریز به حساب:" + GlobalConstant.operationalExporterOwner.getBankAccountId() + "(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
+                SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExporterOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+                System.out.println(smsResponse.toString());
+                System.err.println(smsResponse.getSendSMSResult());
+
+
+                String message2 = "برداشت از حساب:" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
+                SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+                System.out.println(smsResponse2.toString());
+                System.err.println(smsResponse2.getSendSMSResult());
+
                 // transfer
 
                 TransactionType transactionType = TransactionType.PAYMENT;
                 Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.parent.getExchangerAccount(), this.exporterAccount, this.valueInRial, Calendar.getInstance().getTimeInMillis());
-                ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  GlobalConstant.operationalExchangerOwner, GlobalConstant.operationalExporterOwner, Calendar.getInstance().getTimeInMillis());
+                ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalConstant.operationalExchangerOwner, GlobalConstant.operationalExporterOwner, Calendar.getInstance().getTimeInMillis());
 
             } else {
                 throw new EntityBadRequestException("subcontract with id " + this.id + "can not be payed!");
@@ -92,7 +105,7 @@ public class Subcontract extends Contract {
     }
 
 
-    public Transaction claim(TransactionOperatorType operatorType, User operator) {
+    public Transaction claim(TransactionOperatorType operatorType, User operator, SmsClient smsClient, YaghutClient yaghutClient) {
         this.status = ContractStatus.CLAIMED_BY_IMPORTER;
         this.judgeVote = JudgeVote.NOT_JUDGED;
         long value = this.exporterAccount.getCredit();
@@ -103,12 +116,24 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exporterAccount, this.claimAccount, value, Calendar.getInstance().getTimeInMillis());
 
         //sms
+        String message = "واریز به حساب:" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "(حساب عملیاتی داوری)"  + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalClaimOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse.toString());
+        System.err.println(smsResponse.getSendSMSResult());
+
+
+        String message2 = "برداشت از حساب:" + GlobalConstant.operationalExporterOwner.getBankAccountId() + "(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalConstant.operationalExporterOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse2.toString());
+        System.err.println(smsResponse2.getSendSMSResult());
+
+
         // transfer
 
         return transaction;
     }
 
-    private Transaction returnFromClaim2Return(TransactionOperatorType operatorType, Judge operator) {
+    private Transaction returnFromClaim2Return(TransactionOperatorType operatorType, Judge operator, SmsClient smsClient, YaghutClient yaghutClient) {
         this.status = ContractStatus.JUDGED;
         this.setJudgeVote(JudgeVote.NOT_DONE);
         long value = this.claimAccount.getCredit();
@@ -119,13 +144,24 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.parent.returnAccount, value, Calendar.getInstance().getTimeInMillis());
 
         //sms
+        String message = "واریز به حساب:" + GlobalConstant.operationalReturnOwner.getBankAccountId() + "(حساب عملیاتی بازگشت)"  + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalReturnOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse.toString());
+        System.err.println(smsResponse.getSendSMSResult());
+
+
+        String message2 = "برداشت از حساب:" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "(حساب عملیاتی داوری)"  + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalConstant.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse2.toString());
+        System.err.println(smsResponse2.getSendSMSResult());
+
         // transfer
 
         return transaction;
 
     }
 
-    private Transaction returnFromClaim2Exporter(TransactionOperatorType operatorType, Judge operator) {
+    private Transaction returnFromClaim2Exporter(TransactionOperatorType operatorType, Judge operator, SmsClient smsClient, YaghutClient yaghutClient) {
 
         this.status = ContractStatus.JUDGED;
         this.judgeVote = JudgeVote.DONE;
@@ -136,13 +172,25 @@ public class Subcontract extends Contract {
         TransactionType transactionType = TransactionType.JUDGEMENT_DONE;
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.exporterAccount, value, Calendar.getInstance().getTimeInMillis());
 
+
         //sms
+        String message = "واریز به حساب:" + GlobalConstant.operationalExporterOwner.getBankAccountId() + "(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExporterOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse.toString());
+        System.err.println(smsResponse.getSendSMSResult());
+
+
+        String message2 = "برداشت از حساب:" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + value + "ریال";
+        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalConstant.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse2.toString());
+        System.err.println(smsResponse2.getSendSMSResult());
+
         // transfer
 
         return transaction;
     }
 
-    public Transaction judge(TransactionOperatorType operatorType, Judge operator, JudgeVote vote) {
+    public Transaction judge(TransactionOperatorType operatorType, Judge operator, JudgeVote vote, SmsClient smsClient, YaghutClient yaghutClient) {
         if (this.status == ContractStatus.CLAIMED_BY_IMPORTER) {
             this.parent.numberOfJudgedSubcontracts++;
             this.judgeVote = vote;
@@ -150,16 +198,14 @@ public class Subcontract extends Contract {
             if (vote == JudgeVote.DONE) {
 
                 this.parent.numberOfSuccessfulSubcontracts++;
-                transaction =  returnFromClaim2Exporter(operatorType, operator);
+                transaction = returnFromClaim2Exporter(operatorType, operator, smsClient, yaghutClient);
                 ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalConstant.operationalClaimOwner, GlobalConstant.operationalExporterOwner, Calendar.getInstance().getTimeInMillis());
 
             } else {
 
-                //sms
-                // transfer
                 this.parent.numberOfFailedSubcontracts++;
-                transaction = returnFromClaim2Return(operatorType, operator);
-                ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  GlobalConstant.operationalClaimOwner, GlobalConstant.operationalReturnOwner, Calendar.getInstance().getTimeInMillis());
+                transaction = returnFromClaim2Return(operatorType, operator, smsClient, yaghutClient);
+                ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalConstant.operationalClaimOwner, GlobalConstant.operationalReturnOwner, Calendar.getInstance().getTimeInMillis());
 
             }
             this.parent.judge();

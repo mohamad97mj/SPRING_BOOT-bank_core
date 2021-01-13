@@ -151,7 +151,7 @@ public class SubcontractServiceImpl implements SubcontractService {
         if (operator == null) {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalId);
         }
-        theSubcontract.judge(operatorType, operator, judgeVote);
+        theSubcontract.judge(operatorType, operator, judgeVote, smsClient, yaghutClient);
         return subcontractDAO.save(theSubcontract);
     }
 

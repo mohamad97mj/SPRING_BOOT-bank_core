@@ -9,6 +9,7 @@ import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalConstant;
+import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -159,12 +160,12 @@ public class NormalContract extends Contract {
         return -1;
     }
 
-    public boolean charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient) {
+    public void charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient) {
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
-            String message = "واریز به حساب:" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n" + "مبلغ:" + this.valueInRial;
+            String message = "واریز به حساب:" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
             SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
             System.out.println(smsResponse.toString());
             System.err.println(smsResponse.getSendSMSResult());
@@ -172,7 +173,6 @@ public class NormalContract extends Contract {
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());
             ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  getSrcPublicOwner(), GlobalConstant.operationalExchangerOwner, Calendar.getInstance().getTimeInMillis());
-            return true;
         } else {
             throw new EntityBadRequestException("normal contract with id" + this.id + "can not be charged");
         }
@@ -185,10 +185,9 @@ public class NormalContract extends Contract {
             ExternalTransaction[] exTransaction = new ExternalTransaction[subcontracts.size()];
             this.status = ContractStatus.CLAIMED_BY_IMPORTER;
             this.judgeVote = JudgeVote.NOT_JUDGED;
-            //sms
-            //normal transfer
+
             for (int i = 0; i < subcontracts.size(); i++) {
-                transactions[i] = subcontracts.get(i).claim(operatorType, operator);
+                transactions[i] = subcontracts.get(i).claim(operatorType, operator, smsClient, yaghutClient);
                 exTransaction[i] = new ExternalTransaction(0, transactions[i], GlobalConstant.operationalExporterOwner, GlobalConstant.operationalClaimOwner, Calendar.getInstance().getTimeInMillis());
             }
         } else {
@@ -203,6 +202,9 @@ public class NormalContract extends Contract {
 
         this.exchangerAccount.setCredit(0);
         this.returnAccount.setCredit(value);
+
+        // sms
+        //transfer
 
         TransactionType transactionType = TransactionType.RETURN_REMAINING;
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, Calendar.getInstance().getTimeInMillis());
