@@ -3,6 +3,7 @@ package ir.co.pna.exchange.service.normalContract;
 import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
+import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.dao.account.AccountDAO;
 import ir.co.pna.exchange.dao.judge.JudgeDAO;
 import ir.co.pna.exchange.dao.normalContract.NormalContractDAO;
@@ -35,6 +36,7 @@ public class NormalContractServiceImpl implements NormalContractService {
     private UserDAO userDAO;
     private TransactionDAO transactionDAO;
     private SmsClient smsClient;
+    private YaghutClient yaghutClient;
 
     @Autowired
     public NormalContractServiceImpl(
@@ -44,7 +46,8 @@ public class NormalContractServiceImpl implements NormalContractService {
             @Qualifier("accountDAOJpaImpl") AccountDAO theAccountDAO,
             @Qualifier("userDAOHibernateImpl") UserDAO theUserDAO,
             @Qualifier("transactionDAOJpaImpl") TransactionDAO theTransactionDAO,
-            SmsClient theSmsClient
+            SmsClient theSmsClient,
+            YaghutClient theYaghutClient
 
     ) {
         normalContractDAO = theNormalContractDAO;
@@ -54,6 +57,7 @@ public class NormalContractServiceImpl implements NormalContractService {
         userDAO = theUserDAO;
         transactionDAO = theTransactionDAO;
         smsClient = theSmsClient;
+        yaghutClient = theYaghutClient;
     }
 
     @Override
@@ -151,14 +155,7 @@ public class NormalContractServiceImpl implements NormalContractService {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
 
-        boolean isDone = theNormalContract.charge(operator, operatorType);
-        if (isDone) {
-            String message = "واریز به حساب" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n" + "مبلغ:" + theNormalContract.getValueInRial();
-            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
-
-        }
+        theNormalContract.charge(operator, operatorType, smsClient);
         return normalContractDAO.save(theNormalContract);
     }
 
@@ -173,7 +170,7 @@ public class NormalContractServiceImpl implements NormalContractService {
         if (operator == null) {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
-        theNormalContract.claim(operator, operatorType);
+        theNormalContract.claim(operator, operatorType, smsClient, yaghutClient);
         return normalContractDAO.save(theNormalContract);
     }
 }

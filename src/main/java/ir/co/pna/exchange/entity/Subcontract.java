@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.emum.ContractStatus;
 import ir.co.pna.exchange.emum.JudgeVote;
 import ir.co.pna.exchange.emum.TransactionOperatorType;
@@ -66,7 +68,7 @@ public class Subcontract extends Contract {
     }
 
 
-    public void pay(TransactionOperatorType operatorType, User operator) {
+    public void pay(TransactionOperatorType operatorType, User operator, SmsClient smsClient, YaghutClient yaghutClient) {
         if (this.parent.status == ContractStatus.DOING_BY_EXCHANGER) {
             if (this.status == ContractStatus.WAITING_FOR_EXCHANGER_PAYMENT) {
                 this.setStatus(ContractStatus.DOING_BY_EXPORTER);

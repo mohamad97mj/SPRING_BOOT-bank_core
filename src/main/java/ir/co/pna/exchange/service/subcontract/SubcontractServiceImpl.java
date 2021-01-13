@@ -1,5 +1,7 @@
 package ir.co.pna.exchange.service.subcontract;
 
+import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.dao.account.AccountDAO;
 import ir.co.pna.exchange.dao.judge.JudgeDAO;
 import ir.co.pna.exchange.dao.normalContract.NormalContractDAO;
@@ -35,6 +37,8 @@ public class SubcontractServiceImpl implements SubcontractService {
     private PublicOwnerDAO publicOwnerDAO;
     private AccountDAO accountDAO;
     private TransactionDAO transactionDAO;
+    private SmsClient smsClient;
+    private YaghutClient yaghutClient;
 
 
     @Autowired
@@ -45,7 +49,9 @@ public class SubcontractServiceImpl implements SubcontractService {
             @Qualifier("normalContractDAOJpaImpl") NormalContractDAO theNormalContractDAO,
             @Qualifier("publicOwnerDAOHibernateImpl") PublicOwnerDAO thePublicOwnerDAO,
             @Qualifier("accountDAOJpaImpl") AccountDAO theAccountDAO,
-            @Qualifier("transactionDAOJpaImpl") TransactionDAO theTransactionDAO
+            @Qualifier("transactionDAOJpaImpl") TransactionDAO theTransactionDAO,
+            SmsClient theSmsClient,
+            YaghutClient theYaghutClient
     ) {
         userDAO = theUserDAO;
         judgeDAO = theJudgeDAO;
@@ -54,6 +60,8 @@ public class SubcontractServiceImpl implements SubcontractService {
         publicOwnerDAO = thePublicOwnerDAO;
         accountDAO = theAccountDAO;
         transactionDAO = theTransactionDAO;
+        smsClient = theSmsClient;
+        yaghutClient = theYaghutClient;
     }
 
     @Override
@@ -128,7 +136,7 @@ public class SubcontractServiceImpl implements SubcontractService {
         if (operator == null) {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
-        theSubcontract.pay(operatorType, operator);
+        theSubcontract.pay(operatorType, operator, smsClient, yaghutClient);
         return subcontractDAO.save(theSubcontract);
     }
 

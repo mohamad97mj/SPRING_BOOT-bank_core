@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
+import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalConstant;
@@ -158,11 +159,15 @@ public class NormalContract extends Contract {
         return -1;
     }
 
-    public boolean charge(User operator, TransactionOperatorType operatorType) {
+    public boolean charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient) {
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
+            String message = "واریز به حساب:" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n" + "مبلغ:" + this.valueInRial;
+            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+            System.out.println(smsResponse.toString());
+            System.err.println(smsResponse.getSendSMSResult());
 
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());
@@ -173,7 +178,7 @@ public class NormalContract extends Contract {
         }
     }
 
-    public void claim(User operator, TransactionOperatorType operatorType) { // is called after a claim happens
+    public void claim(User operator, TransactionOperatorType operatorType, SmsClient smsClient, YaghutClient yaghutClient) { // is called after a claim happens
 
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_CONFIRMATION) {
             Transaction[] transactions = new Transaction[subcontracts.size()];
