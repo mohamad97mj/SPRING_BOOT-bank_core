@@ -153,7 +153,7 @@ public class NormalContractServiceImpl implements NormalContractService {
 
         boolean isDone = theNormalContract.charge(operator, operatorType);
         if (isDone) {
-            String message = GlobalConstant.operationalExchangerOwner.getBankAccountId() + "واریز به حساب";
+            String message = "واریز به حساب" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n" + "مبلغ:" + theNormalContract.getValueInRial();
             SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
             System.out.println(smsResponse.toString());
             System.err.println(smsResponse.getSendSMSResult());
