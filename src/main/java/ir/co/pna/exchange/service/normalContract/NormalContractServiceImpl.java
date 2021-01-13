@@ -1,5 +1,8 @@
 package ir.co.pna.exchange.service.normalContract;
 
+import ir.co.pna.exchange.client.sms.SmsClient;
+import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
+import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.dao.account.AccountDAO;
 import ir.co.pna.exchange.dao.judge.JudgeDAO;
 import ir.co.pna.exchange.dao.normalContract.NormalContractDAO;
@@ -31,6 +34,7 @@ public class NormalContractServiceImpl implements NormalContractService {
     private AccountDAO accountDAO;
     private UserDAO userDAO;
     private TransactionDAO transactionDAO;
+    private SmsClient smsClient;
 
     @Autowired
     public NormalContractServiceImpl(
@@ -39,7 +43,8 @@ public class NormalContractServiceImpl implements NormalContractService {
             @Qualifier("publicOwnerDAOHibernateImpl") PublicOwnerDAO thePublicOwnerDAO,
             @Qualifier("accountDAOJpaImpl") AccountDAO theAccountDAO,
             @Qualifier("userDAOHibernateImpl") UserDAO theUserDAO,
-            @Qualifier("transactionDAOJpaImpl") TransactionDAO theTransactionDAO
+            @Qualifier("transactionDAOJpaImpl") TransactionDAO theTransactionDAO,
+            SmsClient theSmsClient
 
     ) {
         normalContractDAO = theNormalContractDAO;
@@ -48,6 +53,7 @@ public class NormalContractServiceImpl implements NormalContractService {
         accountDAO = theAccountDAO;
         userDAO = theUserDAO;
         transactionDAO = theTransactionDAO;
+        smsClient = theSmsClient;
     }
 
     @Override
@@ -144,7 +150,15 @@ public class NormalContractServiceImpl implements NormalContractService {
         if (operator == null) {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
-        theNormalContract.charge(operator, operatorType);
+
+        boolean isDone = theNormalContract.charge(operator, operatorType);
+        if (isDone) {
+            String message = GlobalConstant.operationalExchangerOwner.getBankAccountId() + "واریز به حساب";
+            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+            System.out.println(smsResponse.toString());
+            System.err.println(smsResponse.getSendSMSResult());
+
+        }
         return normalContractDAO.save(theNormalContract);
     }
 

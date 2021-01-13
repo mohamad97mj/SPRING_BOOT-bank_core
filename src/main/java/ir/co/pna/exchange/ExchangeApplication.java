@@ -21,7 +21,7 @@ public class ExchangeApplication {
         SpringApplication.run(ExchangeApplication.class, args);
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner lookup(SmsClient smsClient, YaghutClient yaghutClient) {
         return args -> {
             System.out.println("application started");

@@ -8,22 +8,23 @@ import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalConstant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
 @Entity
+@Configurable(preConstruction = true)
 @JsonIgnoreProperties({"subcontracts", "returnAccount", "claimAccount", "exchangerAccount", "numberOfPayedSubcontracts", "numberOfSuccessfulSubcontracts", "numberOfJudgedSubcontracts", "availableValueInRial"})
 @JsonPropertyOrder({"id", "src_owner_bank_account_id", "dst_owner_bank_account_id", "value_in_rial", "remittance_currency", "remittance_value", "settlement_type", "judge_name", "judge_national_id", "judge_vote", "expire_date", "status", "description"})
 public class NormalContract extends Contract {
 
 //    @Transient
 //    SubcontractService subContractService;
-
-    @Transient
-    SmsClient smsClient;
 
     @ManyToOne(
             fetch = FetchType.LAZY
@@ -157,19 +158,16 @@ public class NormalContract extends Contract {
         return -1;
     }
 
-    public void charge(User operator, TransactionOperatorType operatorType) {
+    public boolean charge(User operator, TransactionOperatorType operatorType) {
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
-            String message = GlobalConstant.operationalExchangerOwner.getBankAccountId() + "واریز به حساب";
-            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
 
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());
             ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  getSrcPublicOwner(), GlobalConstant.operationalExchangerOwner, Calendar.getInstance().getTimeInMillis());
+            return true;
         } else {
             throw new EntityBadRequestException("normal contract with id" + this.id + "can not be charged");
         }
