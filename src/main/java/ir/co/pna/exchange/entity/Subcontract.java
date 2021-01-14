@@ -9,6 +9,7 @@ import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
+import ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse;
 import ir.co.pna.exchange.emum.ContractStatus;
 import ir.co.pna.exchange.emum.JudgeVote;
 import ir.co.pna.exchange.emum.TransactionOperatorType;
@@ -17,6 +18,7 @@ import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalConstant;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 
@@ -90,6 +92,10 @@ public class Subcontract extends Contract {
                 System.err.println(smsResponse2.getSendSMSResult());
 
                 // transfer
+                NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalConstant.operationalExchangerOwner.getIbUsername(), GlobalConstant.operationalExchangerOwner.getIbPassword(), GlobalConstant.operationalExchangerOwner.getBankAccountId(), GlobalConstant.operationalExporterOwner.getBankAccountId(), new BigDecimal(this.valueInRial), "destinationComment", "sourceComment");
+                System.out.println("exchanger(tavalaee) to exporter(yaghli):");
+                System.err.println(transferResponse.getNormalTransferResult());
+
 
                 TransactionType transactionType = TransactionType.PAYMENT;
                 Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.parent.getExchangerAccount(), this.exporterAccount, this.valueInRial, Calendar.getInstance().getTimeInMillis());
@@ -116,7 +122,7 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exporterAccount, this.claimAccount, value, Calendar.getInstance().getTimeInMillis());
 
         //sms
-        String message = "واریز به حساب:\n" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "\n(حساب عملیاتی داوری)"  + "\n" + "مبلغ:" + value + "ریال";
+        String message = "واریز به حساب:\n" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + value + "ریال";
         SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalClaimOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
         System.out.println(smsResponse.toString());
         System.err.println(smsResponse.getSendSMSResult());
@@ -129,6 +135,10 @@ public class Subcontract extends Contract {
 
 
         // transfer
+        NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalConstant.operationalExporterOwner.getIbUsername(), GlobalConstant.operationalExporterOwner.getIbPassword(), GlobalConstant.operationalExporterOwner.getBankAccountId(), GlobalConstant.operationalClaimOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
+        System.out.println("exchanger(tavalaee) to exporter(yaghli):");
+        System.err.println(transferResponse.getNormalTransferResult());
+
 
         return transaction;
     }
@@ -144,18 +154,21 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.parent.returnAccount, value, Calendar.getInstance().getTimeInMillis());
 
         //sms
-        String message = "واریز به حساب:\n" + GlobalConstant.operationalReturnOwner.getBankAccountId() + "\n(حساب عملیاتی بازگشت)"  + "\n" + "مبلغ:" + value + "ریال";
+        String message = "واریز به حساب:\n" + GlobalConstant.operationalReturnOwner.getBankAccountId() + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + value + "ریال";
         SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalReturnOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
         System.out.println(smsResponse.toString());
         System.err.println(smsResponse.getSendSMSResult());
 
 
-        String message2 = "برداشت از حساب:\n" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "\n(حساب عملیاتی داوری)"  + "\n" + "مبلغ:" + value + "ریال";
+        String message2 = "برداشت از حساب:\n" + GlobalConstant.operationalClaimOwner.getBankAccountId() + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + value + "ریال";
         SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalConstant.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
         System.out.println(smsResponse2.toString());
         System.err.println(smsResponse2.getSendSMSResult());
 
         // transfer
+        NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalConstant.operationalClaimOwner.getIbUsername(), GlobalConstant.operationalClaimOwner.getIbPassword(), GlobalConstant.operationalClaimOwner.getBankAccountId(), GlobalConstant.operationalReturnOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
+        System.out.println("claim(shahsavani) to return(mojahed):");
+        System.err.println(transferResponse.getNormalTransferResult());
 
         return transaction;
 
@@ -185,7 +198,11 @@ public class Subcontract extends Contract {
         System.out.println(smsResponse2.toString());
         System.err.println(smsResponse2.getSendSMSResult());
 
+
         // transfer
+        NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalConstant.operationalClaimOwner.getIbUsername(), GlobalConstant.operationalClaimOwner.getIbPassword(), GlobalConstant.operationalClaimOwner.getBankAccountId(), GlobalConstant.operationalExporterOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
+        System.out.println("claim(shahsavani) to exporter(yaghli):");
+        System.err.println(transferResponse.getNormalTransferResult());
 
         return transaction;
     }
