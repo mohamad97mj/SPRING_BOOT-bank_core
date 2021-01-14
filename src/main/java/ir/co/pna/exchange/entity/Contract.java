@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "contract")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Contract {
-    @TableGenerator(name = "CONTRACT_ID_Gen", table = "CONTRACT_ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", pkColumnValue = "ID_Gen", initialValue = 10000, allocationSize = 100)
+    @TableGenerator(name = "CONTRACT_ID_Gen", table = "CONTRACT_ID_GEN", pkColumnName = "GEN_NAME", valueColumnName = "GEN_VAL", pkColumnValue = "ID_Gen", initialValue = 1000000, allocationSize = 1)
     @Id
     @Column(name = "id")
     @JsonProperty("id")

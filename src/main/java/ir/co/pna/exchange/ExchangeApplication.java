@@ -6,6 +6,7 @@ import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse;
 import ir.co.pna.exchange.utility.GlobalConstant;
+import ir.co.pna.exchange.utility.IdGen;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,10 +19,12 @@ import java.util.Calendar;
 public class ExchangeApplication {
 
     public static void main(String[] args) {
+
+        System.out.println(IdGen.generateId("1084092461002"));
 //        String message = "واریز به حساب:\n" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + 200 + "ریال";
 //        System.out.println(message);
-        System.out.println(Calendar.getInstance().getTimeInMillis());
-        SpringApplication.run(ExchangeApplication.class, args);
+//        System.out.println(Calendar.getInstance().getTimeInMillis());
+//        SpringApplication.run(ExchangeApplication.class, args);
     }
 
 //    @Bean
