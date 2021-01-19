@@ -13,7 +13,7 @@ public class GlobalConstant {
     public static final String OPERATIONAL_EXPORTER_OWNER_BANK_ACCOUNT_ID = "104-701-121924-1"; // yaghliDepositNo
     private static String yaghliUsername = "payamyaghli";
     private static String yaghliPassword = "81750304";
-    private static String yaghliMobileNumber = "09059242876";
+    private static String yaghliMobileNumber = "09123896102";
 
 
     public static final String OPERATIONAL_CLAIM_OWNER_BANK_ACCOUNT_ID = "147-1-4681241-1"; // shahsavani
