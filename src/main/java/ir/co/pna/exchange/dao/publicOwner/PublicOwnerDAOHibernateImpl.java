@@ -1,5 +1,7 @@
 package ir.co.pna.exchange.dao.publicOwner;
 
+import ir.co.pna.exchange.emum.OwnerType;
+import ir.co.pna.exchange.entity.Exporter;
 import ir.co.pna.exchange.entity.PublicOwner;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,12 @@ public class PublicOwnerDAOHibernateImpl implements PublicOwnerDAO {
 
 		PublicOwner thePublicOwner =
 				currentSession.find(PublicOwner.class, theId);
-		
-		return thePublicOwner;
+		PublicOwner rValue;
+		if(thePublicOwner.getOwnerType()== OwnerType.EXPORTER)
+			rValue = currentSession.find(Exporter.class,theId);
+		else
+			rValue = thePublicOwner;
+		return rValue;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import java.util.List;
 @Entity
 @Configurable(preConstruction = true)
 @JsonIgnoreProperties({"subcontracts", "returnAccount", "claimAccount", "exchangerAccount", "numberOfPayedSubcontracts", "numberOfSuccessfulSubcontracts", "numberOfJudgedSubcontracts", "availableValueInRial"})
-@JsonPropertyOrder({"id", "src_owner_bank_account_id", "dst_owner_bank_account_id", "value_in_rial", "remittance_currency", "remittance_value", "settlement_type", "judge_name", "judge_national_id", "judge_vote", "expire_date", "status", "description"})
+@JsonPropertyOrder({"id", "src_owner_bank_account_id", "dst_owner_bank_account_id", "value_in_rial", "remittance_currency", "remittance_value", "settlement_type", "judge_name", "judge_national_id", "judge_vote", "expire_date", "status", "description", "payment_id"})
 public class NormalContract extends Contract {
 
 //    @Transient
@@ -162,13 +162,15 @@ public class NormalContract extends Contract {
 
     public void charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient) {
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
+            // to check whether payment is really done or not
+
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
-            String message = "واریز به حساب:\n" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
-            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
+//            String message = "واریز به حساب:\n" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
+//            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//            System.out.println(smsResponse.toString());
+//            System.err.println(smsResponse.getSendSMSResult());
 
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());

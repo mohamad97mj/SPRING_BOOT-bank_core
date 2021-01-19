@@ -19,12 +19,7 @@ import java.util.Calendar;
 public class ExchangeApplication {
 
     public static void main(String[] args) {
-
-        System.out.println(IdGen.generateId("1084092461002"));
-//        String message = "واریز به حساب:\n" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + 200 + "ریال";
-//        System.out.println(message);
-//        System.out.println(Calendar.getInstance().getTimeInMillis());
-//        SpringApplication.run(ExchangeApplication.class, args);
+        SpringApplication.run(ExchangeApplication.class, args);
     }
 
 //    @Bean

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.co.pna.exchange.emum.ContractStatus;
 import ir.co.pna.exchange.emum.JudgeVote;
+import ir.co.pna.exchange.utility.IdGen;
 
 import javax.persistence.*;
 
@@ -24,6 +25,10 @@ public class Contract {
     @Column(name = "judge_vote")
     @JsonProperty("judge_vote")
     protected JudgeVote judgeVote;
+
+    @Column(name="payment_id")
+    @JsonProperty("payment_id")
+    protected String paymentId = "-";
 
 
     @ManyToOne(
@@ -152,6 +157,14 @@ public class Contract {
 
     public void setStatus(ContractStatus contractStatus) {
         this.status = contractStatus;
+    }
+
+    public void setPaymentId() {
+        this.paymentId = IdGen.generateId(String.format("%07d", this.id) + String.format("%06d", this.valueInRial/1000000));
+    }
+
+    public String getPaymentId () {
+        return this.paymentId;
     }
 
 }

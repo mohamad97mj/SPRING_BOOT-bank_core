@@ -9,10 +9,7 @@ import ir.co.pna.exchange.dao.publicOwner.PublicOwnerDAO;
 import ir.co.pna.exchange.dao.subcontract.SubcontractDAO;
 import ir.co.pna.exchange.dao.transaction.TransactionDAO;
 import ir.co.pna.exchange.dao.user.UserDAO;
-import ir.co.pna.exchange.emum.AccountType;
-import ir.co.pna.exchange.emum.ContractStatus;
-import ir.co.pna.exchange.emum.JudgeVote;
-import ir.co.pna.exchange.emum.TransactionOperatorType;
+import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.entity.*;
 import ir.co.pna.exchange.exception.MyEntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,9 +89,11 @@ public class SubcontractServiceImpl implements SubcontractService {
         }
 
         String dstOwnerBankAccountId = (String) payload.get("dst_owner_bank_account_id");
-        PublicOwner dstPublicOwner = publicOwnerDAO.findById(dstOwnerBankAccountId);
+        PublicOwner tmp = publicOwnerDAO.findById(dstOwnerBankAccountId);
+        OwnerType tmp2 = tmp.getOwnerType();
+//        Exporter dstPublicOwner = (Exporter) tmp.;
 
-        if (dstPublicOwner == null) {
+        if (tmp == null) {
             throw new MyEntityNotFoundException("dst owner id not found - " + dstOwnerBankAccountId);
         }
 
@@ -104,7 +103,7 @@ public class SubcontractServiceImpl implements SubcontractService {
         String description = (String) payload.get("description");
 
 
-        Subcontract theSubcontract = parent.createSubcontract(expireDate, dstPublicOwner, valueInRial, remittanceValue, description);
+        Subcontract theSubcontract = parent.createSubcontract(expireDate, tmp, valueInRial, remittanceValue, description);
 
         Account claimAccount = new Account(AccountType.CLAIM, operationalClaimOwner, expireDate, theSubcontract);
         Account exporterAccount = new Account(AccountType.EXPORTER, operationalExporterOwner, expireDate, theSubcontract);

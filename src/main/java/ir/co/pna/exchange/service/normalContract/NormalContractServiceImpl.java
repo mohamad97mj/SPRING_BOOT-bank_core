@@ -128,14 +128,15 @@ public class NormalContractServiceImpl implements NormalContractService {
 
         ContractStatus status = ContractStatus.valueOf((String) payload.get("status"));
         theNormalContract.setStatus(status);
-        if(status == ContractStatus.CONFIRMED_BY_IMPORTER) {
-            for (Subcontract subcontract: theNormalContract.getSubcontracts()) {
+        if (status == ContractStatus.CONFIRMED_BY_IMPORTER) {
+            for (Subcontract subcontract : theNormalContract.getSubcontracts()) {
                 subcontract.setStatus(ContractStatus.CONFIRMED_BY_IMPORTER);
             }
+        } else if (status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
+            theNormalContract.setPaymentId();
         }
         return theNormalContract;
     }
-
 
 
     @Override
