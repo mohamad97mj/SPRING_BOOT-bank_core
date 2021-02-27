@@ -19,8 +19,6 @@ public class OperationalOwner extends Owner {
     @Column(name = "ib_password")
     private String ibPassword;
 
-    @Column(name = "mobile_number")
-    protected String mobileNumber;
 
 
     private void init() {
@@ -33,10 +31,9 @@ public class OperationalOwner extends Owner {
 
     @JsonCreator
     public OperationalOwner(String bankAccountId, OwnerType type, String ibUsername, String ibPassword, String mobileNumber) {
-        super(bankAccountId, type);
+        super(bankAccountId, type, mobileNumber);
         this.ibUsername = ibUsername;
         this.ibPassword = ibPassword;
-        this.mobileNumber = mobileNumber;
         init();
     }
 
@@ -88,10 +85,6 @@ public class OperationalOwner extends Owner {
 
     public void addOneSideInternalTransactions(OneSideInternalTransaction transaction) {
         this.oneSideInternalTransactions.add(transaction);
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
     }
 
     public String getIbUsername() {

@@ -76,7 +76,7 @@ public class Log {
                     + ", accountType: " + account.getType()
                     + ", owner: " + account.getOwner().getBankAccountId()
                     + ", contract: " + account.getContract().getId()
-                    + ", expireDate: " + account.getExpireTime()
+                    + ", expireDate: " + account.getExpireDate()
                     + ", credit: " + account.getCredit());
         }
     }

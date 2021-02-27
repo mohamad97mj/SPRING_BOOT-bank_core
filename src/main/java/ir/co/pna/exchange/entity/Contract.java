@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.co.pna.exchange.emum.ContractStatus;
 import ir.co.pna.exchange.emum.JudgeVote;
+import ir.co.pna.exchange.utility.GlobalVariables;
 import ir.co.pna.exchange.utility.IdGen;
 
 import javax.persistence.*;
-
 
 
 @Entity
@@ -26,10 +26,28 @@ public class Contract {
     @JsonProperty("judge_vote")
     protected JudgeVote judgeVote;
 
-    @Column(name="payment_id")
+    @Column(name = "payment_id")
     @JsonProperty("payment_id")
     protected String paymentId = "-";
 
+
+    @Column(name = "completionـdate")
+    private long completionDate;
+
+    @Column(name = "isـclosed")
+    private boolean isClosed;
+
+    @OneToOne(
+            fetch = FetchType.EAGER,
+            cascade = {
+//                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+//                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
+    )
+    @JoinColumn(name = "return_account_id")
+    protected Account returnAccount;
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -65,6 +83,8 @@ public class Contract {
     protected ContractStatus status;
 
     private void init() {
+        this.isClosed = false;
+        this.judgeVote = JudgeVote.NOT_CLAIMED;
     }
 
     public Contract() {
@@ -80,7 +100,6 @@ public class Contract {
         this.valueInRial = valueInRial;
         this.remittanceValue = remittanceValue;
         this.description = description;
-        this.judgeVote = JudgeVote.NOT_CLAIMED;
         this.dstPublicOwner = dstPublicOwner;
 
     }
@@ -160,11 +179,34 @@ public class Contract {
     }
 
     public void setPaymentId() {
-        this.paymentId = IdGen.generateId(String.format("%07d", this.id) + String.format("%06d", this.valueInRial/1000000));
+        this.paymentId = IdGen.generateId(String.format("%07d", this.id) + String.format("%06d", this.valueInRial / 1000000));
     }
 
-    public String getPaymentId () {
+    public String getPaymentId() {
         return this.paymentId;
+    }
+
+    public Account getReturnAccount() {
+        return returnAccount;
+    }
+
+    public void setReturnAccount(Account returnAccount) {
+        this.returnAccount = returnAccount;
+    }
+
+
+    public void close() {
+        this.isClosed = true;
+        this.completionDate = GlobalVariables.getNow();
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+
+    public long getCompletionDate() {
+        return this.completionDate;
     }
 
 }

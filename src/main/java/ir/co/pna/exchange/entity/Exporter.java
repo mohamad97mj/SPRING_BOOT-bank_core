@@ -18,8 +18,8 @@ public class Exporter extends PublicOwner {
 
     public Exporter(){}
 
-    public Exporter(String exporterId){
-        super(exporterId, OwnerType.EXPORTER);
+    public Exporter(String exporterId, String mobileNumber){
+        super(exporterId, OwnerType.EXPORTER, mobileNumber);
         init();
     }
 

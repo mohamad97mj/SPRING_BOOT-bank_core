@@ -2,6 +2,7 @@ package ir.co.pna.exchange.entity;
 
 import ir.co.pna.exchange.emum.AccountType;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
+import ir.co.pna.exchange.utility.GlobalVariables;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ public class Account {
     private long credit;
 
     @Column(name = "expire_date")
-    private long expireTime;
-
+    private long expireDate;
 
     @ManyToOne(
             fetch = FetchType.LAZY
@@ -73,7 +73,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(AccountType type, OperationalOwner owner, long expireTime, Contract contract) {
+    public Account(AccountType type, OperationalOwner owner, long expireDate, Contract contract) {
 
         init();
 
@@ -81,15 +81,14 @@ public class Account {
 //        this.id = id;
         this.type = type;
         this.owner = owner;
-        this.expireTime = expireTime;
+        this.expireDate = expireDate;
         this.contract = contract;
     }
 
     public void decreaseCredit(long value) {
         if (this.credit >= value) {
             this.credit = this.credit - value;
-        }
-        else{
+        } else {
             throw new EntityBadRequestException("not enough credit! for account: " + this.id);
         }
     }
@@ -125,12 +124,12 @@ public class Account {
         this.credit = credit;
     }
 
-    public long getExpireTime() {
-        return expireTime;
+    public long getExpireDate() {
+        return expireDate;
     }
 
-    public void setExpireTime(long expireTime) {
-        this.expireTime = expireTime;
+    public void setExpireDate(long expireDate) {
+        this.expireDate = expireDate;
     }
 
     public Contract getContract() {
@@ -172,4 +171,5 @@ public class Account {
     public void addOutTransaction(Transaction transaction) {
         this.outTransactions.add(transaction);
     }
+
 }

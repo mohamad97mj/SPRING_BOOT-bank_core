@@ -19,8 +19,8 @@ public class Exchanger extends PublicOwner {
 
     public Exchanger(){}
 
-    public Exchanger(String exchangerId){
-        super(exchangerId, OwnerType.EXCHANGER);
+    public Exchanger(String exchangerId, String mobileNumber){
+        super(exchangerId, OwnerType.EXCHANGER, mobileNumber);
         init();
     }
 

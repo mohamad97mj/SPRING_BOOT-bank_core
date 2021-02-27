@@ -5,10 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -47,7 +44,6 @@ public class XLSX {
                             break;
 
 
-
                         case NUMERIC:
 //                            System.out.print(cell.getNumericCellValue() + "\t\t\t");
                             Integer cellObj2 = (int) cell.getNumericCellValue();
@@ -72,7 +68,7 @@ public class XLSX {
         return sheetObj;
     }
 
-        public static void writeFile(String filePath, ArrayList<ArrayList<Object>> content) {
+    public static ByteArrayOutputStream writeFile(String filePath, ArrayList<ArrayList<Object>> content) throws IOException {
 
 
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -80,7 +76,7 @@ public class XLSX {
 
         int rowCount = 0;
 
-        for (int i = 0; i< content.size(); i++){
+        for (int i = 0; i < content.size(); i++) {
 
             Row row = sheet.createRow(rowCount++);
 
@@ -106,6 +102,11 @@ public class XLSX {
             e.printStackTrace();
         }
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//        // fill the OutputStream with the Excel content
+        workbook.write(baos);
+        return baos;
     }
 
 

@@ -3,14 +3,10 @@ package ir.co.pna.exchange.entity;
 
 import com.fasterxml.jackson.annotation.*;
 import ir.co.pna.exchange.client.sms.SmsClient;
-import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
-import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
-import ir.co.pna.exchange.utility.GlobalConstant;
-import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
-import org.springframework.beans.factory.annotation.Autowired;
+import ir.co.pna.exchange.utility.GlobalVariables;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
@@ -21,8 +17,8 @@ import java.util.List;
 
 @Entity
 @Configurable(preConstruction = true)
-@JsonIgnoreProperties({"subcontracts", "returnAccount", "claimAccount", "exchangerAccount", "numberOfPayedSubcontracts", "numberOfSuccessfulSubcontracts", "numberOfJudgedSubcontracts", "availableValueInRial"})
-@JsonPropertyOrder({"id", "src_owner_bank_account_id", "dst_owner_bank_account_id", "value_in_rial", "remittance_currency", "remittance_value", "settlement_type", "judge_name", "judge_national_id", "judge_vote", "expire_date", "status", "description", "payment_id"})
+@JsonIgnoreProperties({"subcontracts", "returnAccount", "claimAccount", "exchangerAccount", "numberOfPayedSubcontracts", "numberOfSuccessfulSubcontracts", "numberOfJudgedSubcontracts"})
+@JsonPropertyOrder({"id", "src_owner_bank_account_id", "dst_owner_bank_account_id", "value_in_rial", "remittance_currency", "remittance_value", "settlement_type", "judge_name", "judge_national_id", "judge_vote", "expire_date", "status", "description", "payment_id", "available_value_in_rial", "parentable"})
 public class NormalContract extends Contract {
 
 //    @Transient
@@ -64,6 +60,10 @@ public class NormalContract extends Contract {
     @Column(name = "number_of_judged_subcontracts")
     protected int numberOfJudgedSubcontracts;
 
+    @Column(name = "is_parentable")
+    @JsonProperty("is_parentable")
+    private boolean isParentable;
+
 
     @OneToMany(
             mappedBy = "parent",
@@ -90,20 +90,8 @@ public class NormalContract extends Contract {
     protected Account exchangerAccount;
 
 
-    @OneToOne(
-            fetch = FetchType.EAGER,
-            cascade = {
-//                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-//                    CascadeType.DETACH,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "return_account_id")
-    protected Account returnAccount;
-
-
     @Column(name = "available_value_in_rial")
+    @JsonProperty("available_value_in_rial")
     protected long availableValueInRial;
 
 
@@ -113,6 +101,7 @@ public class NormalContract extends Contract {
         this.numberOfSuccessfulSubcontracts = 0;
         this.numberOfFailedSubcontracts = 0;
         this.judgeVote = JudgeVote.NOT_CLAIMED;
+        this.isParentable = true;
     }
 
     public NormalContract() {
@@ -140,15 +129,20 @@ public class NormalContract extends Contract {
     }
 
     public Subcontract createSubcontract(long expireDate, PublicOwner dstPublicOwner, long valueInRial, long remittanceValue, String description) {
-        if (valueInRial <= this.availableValueInRial) {
-            this.availableValueInRial -= valueInRial;
-            Subcontract newSubcontract = new Subcontract(this, expireDate, dstPublicOwner, valueInRial, remittanceValue, description);
-            subcontracts.add(newSubcontract);
-            return newSubcontract;
+        if (this.isParentable) {
+            if (valueInRial <= this.availableValueInRial) {
+                this.availableValueInRial -= valueInRial;
+                Subcontract newSubcontract = new Subcontract(this, expireDate, dstPublicOwner, valueInRial, remittanceValue, description);
+                subcontracts.add(newSubcontract);
+                if (this.settlementType == SettlementType.SINGLE) {
+                    isParentable = false;
+                }
+                return newSubcontract;
+            } else {
+                throw new EntityBadRequestException("normal contract with id " + this.id + " has no available value in rial");
+            }
         }
-        else {
-            throw new EntityBadRequestException("normal contract with id " + this.id + " has no available value in rial");
-        }
+        throw new EntityBadRequestException("parent contract with id " + this.id + " is not multiple settlement type");
     }
 
     private int getSubContractIndex(int subContractId) {
@@ -167,14 +161,14 @@ public class NormalContract extends Contract {
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
-            String message = "واریز به حساب:\n" + GlobalConstant.operationalExchangerOwner.getBankAccountId() + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
-            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
+//            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + this.valueInRial + "ریال";
+//            SendSMSResponse smsResponse = smsClient.sendSms(GlobalConstant.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//            System.out.println(smsResponse.toString());
+//            System.err.println(smsResponse.getSendSMSResult());
 
             TransactionType transactionType = TransactionType.CHARGE;
-            Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, Calendar.getInstance().getTimeInMillis());
-            ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  getSrcPublicOwner(), GlobalConstant.operationalExchangerOwner, Calendar.getInstance().getTimeInMillis());
+            Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, GlobalVariables.getNow());
+            ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, this.srcPublicOwner, GlobalVariables.operationalExchangerOwner, GlobalVariables.getNow());
         } else {
             throw new EntityBadRequestException("normal contract with id" + this.id + "can not be charged");
         }
@@ -183,14 +177,15 @@ public class NormalContract extends Contract {
     public void claim(User operator, TransactionOperatorType operatorType, SmsClient smsClient, YaghutClient yaghutClient) { // is called after a claim happens
 
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_CONFIRMATION) {
+            this.close();
             Transaction[] transactions = new Transaction[subcontracts.size()];
             ExternalTransaction[] exTransaction = new ExternalTransaction[subcontracts.size()];
             this.status = ContractStatus.CLAIMED_BY_IMPORTER;
             this.judgeVote = JudgeVote.NOT_JUDGED;
-
+            this.returnFromExchanger2Return(operator, operatorType);
             for (int i = 0; i < subcontracts.size(); i++) {
                 transactions[i] = subcontracts.get(i).claim(operatorType, operator, smsClient, yaghutClient);
-                exTransaction[i] = new ExternalTransaction(0, transactions[i], GlobalConstant.operationalExporterOwner, GlobalConstant.operationalClaimOwner, Calendar.getInstance().getTimeInMillis());
+                exTransaction[i] = new ExternalTransaction(0, transactions[i], GlobalVariables.operationalExporterOwner, GlobalVariables.operationalClaimOwner, GlobalVariables.getNow());
             }
         } else {
             throw new EntityBadRequestException("normal contract with id" + this.id + "can not be claimed");
@@ -198,8 +193,8 @@ public class NormalContract extends Contract {
     }
 
 
-//    to transfer remaining money from exchanger account to return account
-    public void returnFromExchanger2Return(TransactionOperatorType operatorType, User operator) { // is called when contract is NOT_PAYED
+    //    to transfer remaining money from exchanger account to return account
+    public void returnFromExchanger2Return(User operator, TransactionOperatorType operatorType) { // is called when contract is NOT_PAYED
         long value = this.exchangerAccount.getCredit();
 
         this.exchangerAccount.setCredit(0);
@@ -209,8 +204,8 @@ public class NormalContract extends Contract {
         //transfer
 
         TransactionType transactionType = TransactionType.RETURN_REMAINING;
-        Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, Calendar.getInstance().getTimeInMillis());
-        ExternalTransaction exTransaction = new ExternalTransaction(0, transaction,  GlobalConstant.operationalExchangerOwner, GlobalConstant.operationalReturnOwner, Calendar.getInstance().getTimeInMillis());
+        Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, GlobalVariables.getNow());
+        ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalVariables.operationalExchangerOwner, GlobalVariables.operationalReturnOwner, GlobalVariables.getNow());
     }
 
     public void judge() {
@@ -313,14 +308,6 @@ public class NormalContract extends Contract {
 
     public void setExchangerAccount(Account exchangerAccount) {
         this.exchangerAccount = exchangerAccount;
-    }
-
-    public Account getReturnAccount() {
-        return returnAccount;
-    }
-
-    public void setReturnAccount(Account returnAccount) {
-        this.returnAccount = returnAccount;
     }
 
     public void countSuccessfulContracts() {

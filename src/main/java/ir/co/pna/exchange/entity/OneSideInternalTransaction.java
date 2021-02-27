@@ -3,7 +3,7 @@ package ir.co.pna.exchange.entity;
 
 import ir.co.pna.exchange.emum.TransactionOperatorType;
 import ir.co.pna.exchange.emum.TransactionType;
-import ir.co.pna.exchange.utility.GlobalConstant;
+import ir.co.pna.exchange.utility.GlobalVariables;
 
 import javax.persistence.*;
 
@@ -22,7 +22,7 @@ public class OneSideInternalTransaction extends Transaction {
 
     public OneSideInternalTransaction(NormalContract normalContract, User operator, TransactionOperatorType operatorType, TransactionType transactionType, long date) {
         super(normalContract, operator, operatorType, transactionType, normalContract.getValueInRial(), normalContract.getExchangerAccount(), date);
-        GlobalConstant.operationalExchangerOwner.addOneSideInternalTransactions(this);
+        GlobalVariables.operationalExchangerOwner.addOneSideInternalTransactions(this);
         this.src = normalContract.getSrcPublicOwner();
     }
 

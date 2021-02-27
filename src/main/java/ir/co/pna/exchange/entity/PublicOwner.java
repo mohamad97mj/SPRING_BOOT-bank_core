@@ -42,8 +42,8 @@ public class PublicOwner extends Owner {
     }
 
     @JsonCreator
-    public PublicOwner(String bankAccountId, OwnerType type) {
-        super(bankAccountId, type);
+    public PublicOwner(String bankAccountId, OwnerType type, String mobileNumber) {
+        super(bankAccountId, type, mobileNumber);
         init();
     }
 

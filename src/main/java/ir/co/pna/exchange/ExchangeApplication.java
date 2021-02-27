@@ -4,16 +4,9 @@ import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
-import ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse;
-import ir.co.pna.exchange.utility.GlobalConstant;
-import ir.co.pna.exchange.utility.IdGen;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
 
 @SpringBootApplication
 public class ExchangeApplication {

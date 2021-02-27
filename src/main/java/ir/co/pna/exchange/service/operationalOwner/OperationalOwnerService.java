@@ -4,6 +4,8 @@ import ir.co.pna.exchange.emum.OwnerType;
 import ir.co.pna.exchange.entity.ExternalTransaction;
 import ir.co.pna.exchange.entity.OperationalOwner;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,4 +25,5 @@ public interface OperationalOwnerService {
 
     List<ExternalTransaction> getOutExternalTransactionsTimeInterval(OwnerType ownerType, long from, long to);
 
+    byte[] getSystemOutput(long from, long to) throws IOException;
 }

@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-import static ir.co.pna.exchange.utility.GlobalConstant.operationalClaimOwner;
-import static ir.co.pna.exchange.utility.GlobalConstant.operationalExporterOwner;
+import static ir.co.pna.exchange.utility.GlobalVariables.*;
 
 
 @Service
@@ -90,8 +89,6 @@ public class SubcontractServiceImpl implements SubcontractService {
 
         String dstOwnerBankAccountId = (String) payload.get("dst_owner_bank_account_id");
         PublicOwner tmp = publicOwnerDAO.findById(dstOwnerBankAccountId);
-        OwnerType tmp2 = tmp.getOwnerType();
-//        Exporter dstPublicOwner = (Exporter) tmp.;
 
         if (tmp == null) {
             throw new MyEntityNotFoundException("dst owner id not found - " + dstOwnerBankAccountId);
@@ -105,10 +102,11 @@ public class SubcontractServiceImpl implements SubcontractService {
 
         Subcontract theSubcontract = parent.createSubcontract(expireDate, tmp, valueInRial, remittanceValue, description);
 
+        Account returnAccount = new Account(AccountType.RETURN, operationalReturnOwner, expireDate, theSubcontract);
         Account claimAccount = new Account(AccountType.CLAIM, operationalClaimOwner, expireDate, theSubcontract);
         Account exporterAccount = new Account(AccountType.EXPORTER, operationalExporterOwner, expireDate, theSubcontract);
 
-
+        theSubcontract.setReturnAccount(returnAccount);
         theSubcontract.setClaimAccount(claimAccount);
         theSubcontract.setExporterAccount(exporterAccount);
         theSubcontract.setId(0);

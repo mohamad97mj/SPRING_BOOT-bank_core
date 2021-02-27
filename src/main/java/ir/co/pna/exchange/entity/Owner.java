@@ -21,6 +21,10 @@ public class Owner {
     @Column(name = "owner_type")
     protected OwnerType ownerType;
 
+    @Column(name = "mobile_number")
+    protected String mobileNumber;
+
+
     @OneToMany(
             mappedBy = "dstOwner",
             fetch = FetchType.LAZY,
@@ -50,10 +54,11 @@ public class Owner {
         outExternalTransactions = new ArrayList<>();
     }
 
-    public Owner(String bankAccountId, OwnerType ownerType) {
+    public Owner(String bankAccountId, OwnerType ownerType, String mobileNumber) {
         init();
         this.bankAccountId = bankAccountId;
         this.ownerType = ownerType;
+        this.mobileNumber = mobileNumber;
     }
 
     public Owner() {
@@ -89,6 +94,12 @@ public class Owner {
         return this.ownerType;
 
     }
+
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
 }
 
 

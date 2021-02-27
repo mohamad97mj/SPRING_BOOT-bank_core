@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static ir.co.pna.exchange.utility.GlobalConstant.*;
+import static ir.co.pna.exchange.utility.GlobalVariables.*;
 
 @Configuration
 class LoadDatabase {
@@ -207,16 +207,18 @@ class LoadDatabase {
 
             if (getOwnerIndex(bankAccountId) == -1) {
                 OwnerType ownerType = OwnerType.valueOf(ownersData.get(i).get(1).toString().toUpperCase());
+                String mobileNumber = ownersData.get(i).get(2).toString();
+
                 PublicOwner publicOwner = null;
                 switch (ownerType) {
                     case IMPORTER:
-                        publicOwner = new Importer(bankAccountId);
+                        publicOwner = new Importer(bankAccountId, mobileNumber);
                         break;
                     case EXCHANGER:
-                        publicOwner = new Exchanger(bankAccountId);
+                        publicOwner = new Exchanger(bankAccountId, mobileNumber);
                         break;
                     case EXPORTER:
-                        publicOwner = new Exporter(bankAccountId);
+                        publicOwner = new Exporter(bankAccountId, mobileNumber);
                         break;
                 }
 
@@ -382,11 +384,11 @@ class LoadDatabase {
 //
 //                NormalContract normalContract = new NormalContract(
 ////                        subcontractService,
-//                        settlementType, srcOwner, dstOwner, judge, expireDate.getTimeInMillis(), valueInRial, remittanceValue, remittanceCurrency, description);
+//                        settlementType, srcOwner, dstOwner, judge, expireDate.getTimeInMillis()/1000, valueInRial, remittanceValue, remittanceCurrency, description);
 //
-//                Account returnAccount = new Account(AccountType.RETURN, returnOwner, expireDate.getTimeInMillis(), normalContract);
-//                Account claimAccount = new Account(AccountType.CLAIM, claimOwner, expireDate.getTimeInMillis(), normalContract);
-//                Account exchangerAccount = new Account(AccountType.EXCHANGER, dstOwner, expireDate.getTimeInMillis(), normalContract);
+//                Account returnAccount = new Account(AccountType.RETURN, returnOwner, expireDate.getTimeInMillis()/1000, normalContract);
+//                Account claimAccount = new Account(AccountType.CLAIM, claimOwner, expireDate.getTimeInMillis()/1000, normalContract);
+//                Account exchangerAccount = new Account(AccountType.EXCHANGER, dstOwner, expireDate.getTimeInMillis()/1000, normalContract);
 //
 //                normalContract.setReturnAccount(returnAccount);
 //                normalContract.setExchangerAccount(exchangerAccount);
@@ -450,11 +452,11 @@ class LoadDatabase {
 ////                saveObject(returnAccount);
 ////                saveObject(claimAccount);
 //
-//                    Subcontract subContract = parent.createSubcontract(expireDate.getTimeInMillis(), dstOwner, valueInRial, remittanceValue, description);
+//                    Subcontract subContract = parent.createSubcontract(expireDate.getTimeInMillis()/1000, dstOwner, valueInRial, remittanceValue, description);
 //
-//                    Account returnAccount = new Account(AccountType.RETURN, dstOwner, expireDate.getTimeInMillis(), subContract);
-//                    Account claimAccount = new Account(AccountType.CLAIM, dstOwner, expireDate.getTimeInMillis(), subContract);
-//                    Account exporterAccount = new Account(AccountType.EXPORTER, dstOwner, expireDate.getTimeInMillis(), subContract);
+//                    Account returnAccount = new Account(AccountType.RETURN, dstOwner, expireDate.getTimeInMillis()/1000, subContract);
+//                    Account claimAccount = new Account(AccountType.CLAIM, dstOwner, expireDate.getTimeInMillis()/1000, subContract);
+//                    Account exporterAccount = new Account(AccountType.EXPORTER, dstOwner, expireDate.getTimeInMillis()/1000, subContract);
 //
 //                    subContract.setClaimAccount(claimAccount);
 //                    subContract.setExporterAccount(exporterAccount);
@@ -494,7 +496,7 @@ class LoadDatabase {
 //
 //            NormalContract normalContract = normalContracts.get(getNormalContractIndex(contractId));
 //            normalContract.charge(operator, TransactionOperatorType.NORMAL_USER);
-////            ExternalTransaction newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, Calendar.getInstance().getTimeInMillis());
+////            ExternalTransaction newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, GlobalVariables.getNow());
 ////            newInternalTransaction.setExternalTransaction(newExternalTransaction);
 ////
 ////            internalTransactions.add(newInternalTransaction);
@@ -520,7 +522,7 @@ class LoadDatabase {
 //
 //            User operator = users.get(getUserIndex(userNationalCode));
 ////            Transaction newInternalTransaction = normalContract.pay(operator, subContractId, TransactionOperatorType.USER);
-////            ExternalTransaction newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, Calendar.getInstance().getTimeInMillis());
+////            ExternalTransaction newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, GlobalVariables.getNow());
 ////            internalTransactions.add(newInternalTransaction);
 ////            externalTransactions.add(newExternalTransaction);
 //
@@ -550,11 +552,11 @@ class LoadDatabase {
 //
 //            ExternalTransaction[] newExternalTransactions = new ExternalTransaction[newInternalTransactions.length];
 //
-//            newExternalTransactions[0] = new ExternalTransaction(bankTransactionId, newInternalTransactions[0], Calendar.getInstance().getTimeInMillis());
+//            newExternalTransactions[0] = new ExternalTransaction(bankTransactionId, newInternalTransactions[0], GlobalVariables.getNow());
 //
 //            for (int j = 1; j < newExternalTransactions.length; j++) {
 //
-//                newExternalTransactions[j] = new ExternalTransaction(bankTransactionId + j, newInternalTransactions[j], Calendar.getInstance().getTimeInMillis());
+//                newExternalTransactions[j] = new ExternalTransaction(bankTransactionId + j, newInternalTransactions[j], GlobalVariables.getNow());
 //            }
 //
 //            internalTransactions.addAll(Arrays.asList(newInternalTransactions));
@@ -600,11 +602,11 @@ class LoadDatabase {
 //
 ////            if (judgeVote == JudgeVote.DONE) {
 ////                newInternalTransaction = normalContract.returnFromClaim2Exporter(contractId, ADMIN, admin);
-////                newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, Calendar.getInstance().getTimeInMillis());
+////                newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, GlobalVariables.getNow());
 ////            } else {
 //
 ////                newInternalTransaction = normalContract.returnFromClaim2Return(contractId, ADMIN, admin);
-////                newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, Calendar.getInstance().getTimeInMillis());
+////                newExternalTransaction = new ExternalTransaction(bankTransactionId, newInternalTransaction, GlobalVariables.getNow());
 ////            }
 //
 ////            internalTransactions.add(newInternalTransaction);
@@ -620,7 +622,7 @@ class LoadDatabase {
 //                User admin = users.get(getUserIndex("99")); // 99 is admin national code
 //
 //                Transaction newInternalTransaction = normalContract.returnFromExchanger2Return(ADMIN, admin);
-//                ExternalTransaction newExternalTransaction = new ExternalTransaction(generateUniqueTransactionId() / 1000, newInternalTransaction, Calendar.getInstance().getTimeInMillis());
+//                ExternalTransaction newExternalTransaction = new ExternalTransaction(generateUniqueTransactionId() / 1000, newInternalTransaction, GlobalVariables.getNow());
 //                internalTransactions.add(newInternalTransaction);
 //                externalTransactions.add(newExternalTransaction);
 //

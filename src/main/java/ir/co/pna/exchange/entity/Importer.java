@@ -22,9 +22,8 @@ public class Importer extends PublicOwner {
         outNormalContracts = new ArrayList<>();
     }
 
-    @JsonCreator
-    public Importer(String importerId) {
-        super(importerId, OwnerType.IMPORTER);
+    public Importer(String importerId, String mobileNumber) {
+        super(importerId, OwnerType.IMPORTER, mobileNumber);
         init();
 
     }

@@ -7,8 +7,17 @@ import ir.co.pna.exchange.entity.PublicOwner;
 import ir.co.pna.exchange.service.operationalOwner.OperationalOwnerService;
 import ir.co.pna.exchange.service.publicOwner.PublicOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,6 +82,21 @@ public class OperationalOwnerRestController {
         long from_time = Long.parseLong(from);
         long to_time = Long.parseLong(to);
         return operationalOwnerService.getOutExternalTransactionsTimeInterval(OwnerType.valueOf(ownerType.toUpperCase()), from_time, to_time);
+    }
+
+    @GetMapping(value = "/operationalowners/systemoutput", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> getSystemOutput(@RequestParam String from, @RequestParam String to) throws IOException {
+        long from_time = Long.parseLong(from);
+        long to_time = Long.parseLong(to);
+        byte[] tmp = operationalOwnerService.getSystemOutput(from_time, to_time);
+        InputStreamResource tmp2 = new InputStreamResource(new ByteArrayInputStream(tmp));
+//        ByteArrayResource resource = new ByteArrayResource(tmp);
+        return ResponseEntity.ok()
+//                .contentLength(resource.contentLength())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(tmp2);
+
     }
 
 }

@@ -1,8 +1,6 @@
 package ir.co.pna.exchange.service.normalContract;
 
 import ir.co.pna.exchange.client.sms.SmsClient;
-import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
-import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
 import ir.co.pna.exchange.dao.account.AccountDAO;
 import ir.co.pna.exchange.dao.judge.JudgeDAO;
@@ -13,17 +11,18 @@ import ir.co.pna.exchange.dao.user.UserDAO;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.entity.*;
 import ir.co.pna.exchange.exception.MyEntityNotFoundException;
-import ir.co.pna.exchange.utility.GlobalConstant;
+import ir.co.pna.exchange.utility.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import static ir.co.pna.exchange.utility.GlobalConstant.operationalExchangerOwner;
-import static ir.co.pna.exchange.utility.GlobalConstant.operationalReturnOwner;
+import static ir.co.pna.exchange.utility.GlobalVariables.operationalExchangerOwner;
+import static ir.co.pna.exchange.utility.GlobalVariables.operationalReturnOwner;
 
 
 @Service
@@ -91,6 +90,7 @@ public class NormalContractServiceImpl implements NormalContractService {
         PublicOwner dstPublicOwner = publicOwnerDAO.findById(dstOwnerBankAccountId);
 
         long valueInRial = ((Number) payload.get("value_in_rial")).longValue();
+//        long valueInRial = Long.parseLong(payload.get("value_in_rial").toString().replaceAll(",", ""));
         Currency remittanceCurrency = Currency.valueOf((String) payload.get("remittance_currency"));
         long remittanceValue = ((Number) payload.get("remittance_value")).longValue();
         SettlementType settlementType = SettlementType.valueOf((String) payload.get("settlement_type"));
@@ -129,8 +129,11 @@ public class NormalContractServiceImpl implements NormalContractService {
         ContractStatus status = ContractStatus.valueOf((String) payload.get("status"));
         theNormalContract.setStatus(status);
         if (status == ContractStatus.CONFIRMED_BY_IMPORTER) {
+            theNormalContract.close();
+
             for (Subcontract subcontract : theNormalContract.getSubcontracts()) {
                 subcontract.setStatus(ContractStatus.CONFIRMED_BY_IMPORTER);
+                subcontract.close();
             }
         } else if (status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
             theNormalContract.setPaymentId();
