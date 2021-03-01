@@ -154,10 +154,10 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.parent.returnAccount, value, GlobalVariables.getNow());
 
         //sms
-//        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-//        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalReturnOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-//        System.out.println(smsResponse.toString());
-//        System.err.println(smsResponse.getSendSMSResult());
+        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+        SendSMSResponse smsResponse = smsClient.sendSms(this.parent.getSrcPublicOwner().getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+        System.out.println(smsResponse.toString());
+        System.err.println(smsResponse.getSendSMSResult());
 
 
 //        String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";

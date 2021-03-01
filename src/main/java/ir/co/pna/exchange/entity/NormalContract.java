@@ -6,12 +6,14 @@ import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
+import ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse;
 import ir.co.pna.exchange.emum.*;
 import ir.co.pna.exchange.exception.EntityBadRequestException;
 import ir.co.pna.exchange.utility.GlobalVariables;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -184,7 +186,7 @@ public class NormalContract extends Contract {
             ExternalTransaction[] exTransaction = new ExternalTransaction[subcontracts.size()];
             this.status = ContractStatus.CLAIMED_BY_IMPORTER;
             this.judgeVote = JudgeVote.NOT_JUDGED;
-            this.returnFromExchanger2Return(operator, operatorType);
+            this.returnFromExchanger2Return(operator, operatorType, smsClient, yaghutClient);
             for (int i = 0; i < subcontracts.size(); i++) {
                 transactions[i] = subcontracts.get(i).claim(operatorType, operator, smsClient, yaghutClient);
                 exTransaction[i] = new ExternalTransaction(0, transactions[i], GlobalVariables.operationalExporterOwner, GlobalVariables.operationalClaimOwner, GlobalVariables.getNow());
@@ -196,18 +198,30 @@ public class NormalContract extends Contract {
 
 
     //    to transfer remaining money from exchanger account to return account
-    public void returnFromExchanger2Return(User operator, TransactionOperatorType operatorType) { // is called when contract is NOT_PAYED
+    public void returnFromExchanger2Return(User operator, TransactionOperatorType operatorType, SmsClient smsClient, YaghutClient yaghutClient) { // is called when contract is NOT_PAYED
         long value = this.exchangerAccount.getCredit();
+        if (value > 0) {
 
-        this.exchangerAccount.setCredit(0);
-        this.returnAccount.setCredit(value);
+            this.exchangerAccount.setCredit(0);
+            this.returnAccount.setCredit(value);
 
-        // sms
-        //transfer
 
-        TransactionType transactionType = TransactionType.RETURN_REMAINING;
-        Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, GlobalVariables.getNow());
-        ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalVariables.operationalExchangerOwner, GlobalVariables.operationalReturnOwner, GlobalVariables.getNow());
+            // sms
+            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+            SendSMSResponse smsResponse = smsClient.sendSms(this.getSrcPublicOwner().getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+            System.out.println(smsResponse.toString());
+            System.err.println(smsResponse.getSendSMSResult());
+
+
+            //transfer
+            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalVariables.operationalClaimOwner.getIbUsername(), GlobalVariables.operationalClaimOwner.getIbPassword(), GlobalVariables.operationalClaimOwner.getBankAccountId(), GlobalVariables.operationalReturnOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
+            System.out.println("exchanger(tavalaee) to return(mojahed):");
+            System.err.println(transferResponse.getNormalTransferResult());
+
+            TransactionType transactionType = TransactionType.RETURN_REMAINING;
+            Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, GlobalVariables.getNow());
+            ExternalTransaction exTransaction = new ExternalTransaction(0, transaction, GlobalVariables.operationalExchangerOwner, GlobalVariables.operationalReturnOwner, GlobalVariables.getNow());
+        }
     }
 
     public void judge() {
