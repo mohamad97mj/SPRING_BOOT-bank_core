@@ -136,7 +136,7 @@ public class Subcontract extends Contract {
 
         // transfer
         NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalVariables.operationalExporterOwner.getIbUsername(), GlobalVariables.operationalExporterOwner.getIbPassword(), GlobalVariables.operationalExporterOwner.getBankAccountId(), GlobalVariables.operationalClaimOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
-        System.out.println("exchanger(tavalaee) to exporter(yaghli):");
+        System.out.println("exporter(yaghli) to claim(shahsavani):");
         System.err.println(transferResponse.getNormalTransferResult());
 
 
