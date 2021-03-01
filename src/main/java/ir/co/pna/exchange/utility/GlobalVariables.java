@@ -10,12 +10,14 @@ public class GlobalVariables {
     private static final String OPERATIONAL_EXCHANGER_OWNER_BANK_ACCOUNT_ID = "151-701-6113835-1"; // tavalaeeDepositNo
     private static String tavalaeeUsername = "matavallaie";
     private static String tavalaeePassword = "36325045";
-    private static String tavalaeeMobileNumber = "09027237097";
+//    private static String tavalaeeMobileNumber = "09027237097";
+    private static String tavalaeeMobileNumber = "09059242876";
 
     private static final String OPERATIONAL_EXPORTER_OWNER_BANK_ACCOUNT_ID = "104-701-121924-1"; // yaghliDepositNo
     private static String yaghliUsername = "payamyaghli";
     private static String yaghliPassword = "81750304";
-    private static String yaghliMobileNumber = "09123896102";
+//    private static String yaghliMobileNumber = "09123896102";
+    private static String yaghliMobileNumber = "09059242876";
 
 
     private static final String OPERATIONAL_CLAIM_OWNER_BANK_ACCOUNT_ID = "147-1-4681241-1"; // shahsavani
