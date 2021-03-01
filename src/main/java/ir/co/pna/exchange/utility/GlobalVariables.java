@@ -38,4 +38,8 @@ public class GlobalVariables {
     public static long getNow() {
         return Calendar.getInstance().getTimeInMillis() / 1000;
     }
+
+    public static String getThousandsSeparated(long number) {
+        return String.format("%,d", number);
+    }
 }
