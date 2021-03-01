@@ -164,7 +164,7 @@ public class NormalContract extends Contract {
             this.exchangerAccount.setCredit(this.valueInRial);
 
             String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(this.valueInRial) + "ریال";
-            SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalExchangerOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+            SendSMSResponse smsResponse = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
             System.out.println(smsResponse.toString());
             System.err.println(smsResponse.getSendSMSResult());
 

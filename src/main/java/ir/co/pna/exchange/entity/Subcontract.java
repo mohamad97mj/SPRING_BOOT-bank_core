@@ -81,13 +81,13 @@ public class Subcontract extends Contract {
 
                 //sms
                 String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(this.valueInRial) + "ریال";
-                SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalExporterOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+                SendSMSResponse smsResponse = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
                 System.out.println(smsResponse.toString());
                 System.err.println(smsResponse.getSendSMSResult());
 
 
                 String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(this.valueInRial) + "ریال";
-                SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalExchangerOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+                SendSMSResponse smsResponse2 = smsClient.sendSms(this.parent.dstPublicOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
                 System.out.println(smsResponse2.toString());
                 System.err.println(smsResponse2.getSendSMSResult());
 //
@@ -122,14 +122,14 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exporterAccount, this.claimAccount, value, GlobalVariables.getNow());
 
         //sms
-        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-        System.out.println(smsResponse.toString());
-        System.err.println(smsResponse.getSendSMSResult());
+//        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+//        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//        System.out.println(smsResponse.toString());
+//        System.err.println(smsResponse.getSendSMSResult());
 
 
         String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" +  "\n(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalExporterOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+        SendSMSResponse smsResponse2 = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
         System.out.println(smsResponse2.toString());
         System.err.println(smsResponse2.getSendSMSResult());
 
@@ -154,16 +154,16 @@ public class Subcontract extends Contract {
         Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.claimAccount, this.parent.returnAccount, value, GlobalVariables.getNow());
 
         //sms
-        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalReturnOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-        System.out.println(smsResponse.toString());
-        System.err.println(smsResponse.getSendSMSResult());
+//        String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+//        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalReturnOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//        System.out.println(smsResponse.toString());
+//        System.err.println(smsResponse.getSendSMSResult());
 
 
-        String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
-        System.out.println(smsResponse2.toString());
-        System.err.println(smsResponse2.getSendSMSResult());
+//        String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+//        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+//        System.out.println(smsResponse2.toString());
+//        System.err.println(smsResponse2.getSendSMSResult());
 //
 //        // transfer
         NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalVariables.operationalClaimOwner.getIbUsername(), GlobalVariables.operationalClaimOwner.getIbPassword(), GlobalVariables.operationalClaimOwner.getBankAccountId(), GlobalVariables.operationalReturnOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
@@ -188,15 +188,15 @@ public class Subcontract extends Contract {
 
         //sms
         String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" +  "\n(حساب عملیاتی صادرکننده ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse = smsClient.sendSms(GlobalVariables.operationalExporterOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+        SendSMSResponse smsResponse = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
         System.out.println(smsResponse.toString());
         System.err.println(smsResponse.getSendSMSResult());
 
 
-        String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" +  "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
-        System.out.println(smsResponse2.toString());
-        System.err.println(smsResponse2.getSendSMSResult());
+//        String message2 = "برداشت از حساب امانی شما نزد بانک اقتصاد نوین:\n" +  "\n(حساب عملیاتی داوری)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+//        SendSMSResponse smsResponse2 = smsClient.sendSms(GlobalVariables.operationalClaimOwner.getMobileNumber(), message2, SMSGateway.ADVERTISEMENT, "demo");
+//        System.out.println(smsResponse2.toString());
+//        System.err.println(smsResponse2.getSendSMSResult());
 
 
         // transfer
