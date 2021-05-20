@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s1="http://service.yaghut.modern.tosan.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:import namespace="http://service.yaghut.modern.tosan.com/" />
+      <s:element name="NormalTransfer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sourceDepositNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="destinationDepositNo" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="amount" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="destinationComment" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sourceComment" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="payId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="referenceNumber" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="getBalance" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NormalTransferResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="NormalTransferResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Statement">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="depositNo" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="fromDate" type="s:dateTime" />
+            <s:element minOccurs="1" maxOccurs="1" name="toDate" type="s:dateTime" />
+            <s:element minOccurs="1" maxOccurs="1" name="offset" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="length" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="StatementResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="StatementResult" type="s1:statementResponseBean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://service.yaghut.modern.tosan.com/">
+      <s:complexType name="statementResponseBean">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="hasMoreItem" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="statementBeans" nillable="true" type="s1:statementBean" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="totalRecord" type="s:long" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="statementBean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="agentBranchCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="agentBranchName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="balance" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="branchCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="branchName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="date" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="paymentId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="referenceNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="registrationNumber" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="serial" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="serialNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="statementId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" form="unqualified" name="transferAmount" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="NormalTransferSoapIn">
+    <wsdl:part name="parameters" element="tns:NormalTransfer" />
+  </wsdl:message>
+  <wsdl:message name="NormalTransferSoapOut">
+    <wsdl:part name="parameters" element="tns:NormalTransferResponse" />
+  </wsdl:message>
+  <wsdl:message name="StatementSoapIn">
+    <wsdl:part name="parameters" element="tns:Statement" />
+  </wsdl:message>
+  <wsdl:message name="StatementSoapOut">
+    <wsdl:part name="parameters" element="tns:StatementResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ExchangeServiceSoap">
+    <wsdl:operation name="NormalTransfer">
+      <wsdl:input message="tns:NormalTransferSoapIn" />
+      <wsdl:output message="tns:NormalTransferSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Statement">
+      <wsdl:input message="tns:StatementSoapIn" />
+      <wsdl:output message="tns:StatementSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ExchangeServiceSoap" type="tns:ExchangeServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="NormalTransfer">
+      <soap:operation soapAction="http://tempuri.org/NormalTransfer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Statement">
+      <soap:operation soapAction="http://tempuri.org/Statement" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ExchangeServiceSoap12" type="tns:ExchangeServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="NormalTransfer">
+      <soap12:operation soapAction="http://tempuri.org/NormalTransfer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Statement">
+      <soap12:operation soapAction="http://tempuri.org/Statement" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ExchangeService">
+    <wsdl:port name="ExchangeServiceSoap" binding="tns:ExchangeServiceSoap">
+      <soap:address location="http://10.0.64.50:8080/ExchangeService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ExchangeServiceSoap12" binding="tns:ExchangeServiceSoap12">
+      <soap12:address location="http://10.0.64.50:8080/ExchangeService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

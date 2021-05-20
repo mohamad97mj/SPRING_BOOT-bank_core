@@ -4,19 +4,86 @@ import ir.co.pna.exchange.client.sms.SmsClient;
 import ir.co.pna.exchange.client.sms.generated_resources.SMSGateway;
 import ir.co.pna.exchange.client.sms.generated_resources.SendSMSResponse;
 import ir.co.pna.exchange.client.yaghut.YaghutClient;
-import ir.co.pna.exchange.utility.GlobalVariables;
+import ir.co.pna.exchange.client.yaghut2.Yaghut2Client;
+import ir.co.pna.exchange.client.yaghut2.generated_resources.StatementResponse;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @SpringBootApplication
 public class ExchangeApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ExchangeApplication.class, args);
+
     }
 
-//    @Bean
+    @Bean
+    CommandLineRunner lookup(SmsClient smsClient, Yaghut2Client yaghut2Client) {
+        return args -> {
+
+            String mojahedUsername = "6471174";
+            String mojahedPassword = "55014205";
+            String mojahedDepositNo = "159-701-6471174-1";
+
+            String tavalaeeUsername = "matavallaie";
+            String tavalaeePassword = "36325045";
+            String tavalaeeDepositNo = "151-701-6113835-1";
+
+            String yaghliUsername = "payamyaghli";
+            String yaghliPassword = "81750304";
+            String yaghliDepositNo = "104-701-121924-1";
+
+            String shahsavaniUsername = "da97349734";
+            String shahsavaniPassword = "85438083";
+            String shahsavaniDepositNo = "147-1-4681241-1";
+
+            String username = tavalaeeUsername;
+            String password = tavalaeePassword;
+            String depositNo = tavalaeeDepositNo;
+
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.set(1300, Calendar.JANUARY, 1);
+            Date fromDate = calendar1.getTime();
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(fromDate);
+            XMLGregorianCalendar fromDate2 = null;
+            try {
+                fromDate2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            } catch (DatatypeConfigurationException e) {
+                e.printStackTrace();
+            }
+
+
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.set(2021, Calendar.MAY, 1);
+            Date toDate = calendar2.getTime();
+            GregorianCalendar c2 = new GregorianCalendar();
+            c2.setTime(toDate);
+            XMLGregorianCalendar toDate2 = null;
+            try {
+                toDate2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c2);
+            } catch (DatatypeConfigurationException e) {
+                e.printStackTrace();
+            }
+
+            StatementResponse response = yaghut2Client.statement(username, password, depositNo, fromDate2, toDate2, 0, 10);
+            System.out.println(response.getStatementResult().getTotalRecord());
+            System.out.println(response.getStatementResult().getStatementBeans());
+            System.out.println(response.getStatementResult().isHasMoreItem());
+        };
+    }
+
+
+    //    @Bean
     CommandLineRunner lookup(SmsClient smsClient, YaghutClient yaghutClient) {
         return args -> {
             System.out.println("application started");
