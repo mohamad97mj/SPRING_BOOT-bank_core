@@ -148,7 +148,7 @@ public class SubcontractServiceImpl implements SubcontractService {
                 theSubcontract.setStatus(ContractStatus.WAITING_FOR_PARENT);
                 break;
         }
-        return subcontracitDAO.save(theSubcontract);
+        return subcontractDAO.save(theSubcontract);
     }
 
     @Override
