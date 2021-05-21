@@ -63,17 +63,10 @@ public class NormalContractRestController {
 
 
     @PutMapping("/normalcontracts/{normalContractId}/charge")
-    public NormalContract chargeNormalContract(@PathVariable int normalContractId, @RequestBody Map<String, Object> payload){
+    public NormalContract chargeNormalContract(@PathVariable int normalContractId, @RequestBody Map<String, Object> payload) {
         NormalContract theNormalContract = normalContractService.findById(normalContractId);
-        return normalContractService.charge(theNormalContract, payload);
+        return normalContractService.act(theNormalContract, "charge", payload);
     }
-
-    @PutMapping("/normalcontracts/{normalContractId}")
-    public NormalContract updateNormalContract(@PathVariable int normalContractId, @RequestBody Map<String, Object> payload) {
-        NormalContract theNormalcontract = normalContractService.findById(normalContractId);
-        return normalContractService.update(theNormalcontract, payload);
-    }
-
 }
 
 

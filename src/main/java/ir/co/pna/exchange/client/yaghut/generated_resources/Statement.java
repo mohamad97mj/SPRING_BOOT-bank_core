@@ -6,7 +6,7 @@
 //
 
 
-package ir.co.pna.exchange.client.yaghut2.generated_resources;
+package ir.co.pna.exchange.client.yaghut.generated_resources;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

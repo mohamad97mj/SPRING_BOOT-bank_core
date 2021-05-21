@@ -142,7 +142,7 @@
                 <configuration>
                     <schemaLanguage>WSDL</schemaLanguage>
                     <generateDirectory>${project.basedir}/src/main/java</generateDirectory>
-                    <generatePackage>ir.co.pna.exchange.client.yaghut2.generated_resources</generatePackage>
+                    <generatePackage>ir.co.pna.exchange.client.yaghut.generated_resources</generatePackage>
                     <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
                     <schemaIncludes>
                         <include>ExchangeService.wsdl</include>

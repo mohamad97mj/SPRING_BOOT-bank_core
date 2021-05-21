@@ -122,40 +122,10 @@ public class NormalContractServiceImpl implements NormalContractService {
         return normalContractDAO.save(theNormalContract);
     }
 
-    @Override
-    @Transactional
-    public NormalContract update(NormalContract theNormalContract, Map<String, Object> payload) {
-
-        ContractStatus status = ContractStatus.valueOf((String) payload.get("status"));
-        theNormalContract.setStatus(status);
-        if (status == ContractStatus.CONFIRMED_BY_IMPORTER) {
-            theNormalContract.close();
-
-            for (Subcontract subcontract : theNormalContract.getSubcontracts()) {
-                subcontract.setStatus(ContractStatus.CONFIRMED_BY_IMPORTER);
-                subcontract.close();
-            }
-        } else if (status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
-            theNormalContract.setPaymentId();
-        }
-        return theNormalContract;
-    }
-
 
     @Override
     @Transactional
-    public List<Subcontract> getSubcontracts(int id) {
-//        TODO implement in dao layer
-        NormalContract theNormalContract = normalContractDAO.findById(id);
-        if (theNormalContract == null) {
-            throw new MyEntityNotFoundException("normal contract id not found - " + id);
-        }
-        return theNormalContract.getSubcontracts();
-    }
-
-    @Override
-    @Transactional
-    public NormalContract charge(NormalContract theNormalContract, Map<String, Object> payload) {
+    public NormalContract act(NormalContract theNormalContract, String action, Map<String, Object> payload) {
 
         String operatorNationalCode = (String) payload.get("operator_national_code");
         TransactionOperatorType operatorType = TransactionOperatorType.valueOf((String) payload.get("operator_type"));
@@ -164,22 +134,37 @@ public class NormalContractServiceImpl implements NormalContractService {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
 
-        theNormalContract.charge(operator, operatorType, smsClient);
-        return normalContractDAO.save(theNormalContract);
-    }
+        switch (action) {
+            case "accept":
+                theNormalContract.setStatus(ContractStatus.WAITING_FOR_IMPORTER_PAYMENT);
+                theNormalContract.setPaymentId();
+                break;
+            case "reject":
+                theNormalContract.setStatus(ContractStatus.REJECTED_BY_EXCHANGER);
+                break;
+            case "charge":
+                theNormalContract.charge(operator, operatorType, smsClient, yaghutClient);
+                break;
+            case "end":
+                theNormalContract.setStatus(ContractStatus.WAITING_FOR_IMPORTER_CONFIRMATION);
+                for (Subcontract subcontract : theNormalContract.getSubcontracts()) {
+                    subcontract.setStatus(ContractStatus.WAITING_FOR_IMPORTER_CONFIRMATION);
+                }
+                break;
+            case "confirm":
+                theNormalContract.setStatus(ContractStatus.CONFIRMED_BY_IMPORTER);
+                theNormalContract.close();
 
-
-    @Override
-    @Transactional
-    public NormalContract claim(NormalContract theNormalContract, Map<String, Object> payload) {
-
-        String operatorNationalCode = (String) payload.get("operator_national_code");
-        TransactionOperatorType operatorType = TransactionOperatorType.valueOf((String) payload.get("operator_type"));
-        User operator = userDAO.findById(operatorNationalCode);
-        if (operator == null) {
-            throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
+                for (Subcontract subcontract : theNormalContract.getSubcontracts()) {
+                    subcontract.setStatus(ContractStatus.CONFIRMED_BY_IMPORTER);
+                    subcontract.close();
+                }
+                break;
+            case "claim":
+                theNormalContract.claim(operator, operatorType, smsClient, yaghutClient);
+                break;
         }
-        theNormalContract.claim(operator, operatorType, smsClient, yaghutClient);
+
         return normalContractDAO.save(theNormalContract);
     }
 }

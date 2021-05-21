@@ -14,31 +14,31 @@ Generated on: 2021.05.06 at 01:42:25 PM IRDT
             
         <schemaBindings map="false">
                   
-            <package name="ir.co.pna.exchange.client.yaghut2.generated_resources"/>
+            <package name="ir.co.pna.exchange.client.yaghut.generated_resources"/>
                 
         </schemaBindings>
             
         <bindings if-exists="true" scd="tns:NormalTransfer">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.NormalTransfer"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransfer"/>
                 
         </bindings>
             
         <bindings if-exists="true" scd="tns:NormalTransferResponse">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.NormalTransferResponse"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.NormalTransferResponse"/>
                 
         </bindings>
             
         <bindings if-exists="true" scd="tns:Statement">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.Statement"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.Statement"/>
                 
         </bindings>
             
         <bindings if-exists="true" scd="tns:StatementResponse">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.StatementResponse"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.StatementResponse"/>
                 
         </bindings>
           
@@ -48,19 +48,19 @@ Generated on: 2021.05.06 at 01:42:25 PM IRDT
             
         <schemaBindings map="false">
                   
-            <package name="ir.co.pna.exchange.client.yaghut2.generated_resources"/>
+            <package name="ir.co.pna.exchange.client.yaghut.generated_resources"/>
                 
         </schemaBindings>
             
         <bindings if-exists="true" scd="~tns:statementResponseBean">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.StatementResponseBean"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.StatementResponseBean"/>
                 
         </bindings>
             
         <bindings if-exists="true" scd="~tns:statementBean">
                   
-            <class ref="ir.co.pna.exchange.client.yaghut2.generated_resources.StatementBean"/>
+            <class ref="ir.co.pna.exchange.client.yaghut.generated_resources.StatementBean"/>
                 
         </bindings>
           

@@ -158,17 +158,17 @@ public class NormalContract extends Contract {
         return -1;
     }
 
-    public void charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient) {
+    public void charge(User operator, TransactionOperatorType operatorType, SmsClient smsClient, YaghutClient yaghutClient) {
         if (this.status == ContractStatus.WAITING_FOR_IMPORTER_PAYMENT) {
             // to check whether payment is really done or not
 
             this.status = ContractStatus.DOING_BY_EXCHANGER;
             this.exchangerAccount.setCredit(this.valueInRial);
 
-            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(this.valueInRial) + "ریال";
-            SendSMSResponse smsResponse = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
+//            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی صراف ها)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(this.valueInRial) + "ریال";
+//            SendSMSResponse smsResponse = smsClient.sendSms(this.dstPublicOwner.getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//            System.out.println(smsResponse.toString());
+//            System.err.println(smsResponse.getSendSMSResult());
 
             TransactionType transactionType = TransactionType.CHARGE;
             Transaction transaction = new OneSideInternalTransaction(this, operator, operatorType, transactionType, GlobalVariables.getNow());
@@ -207,16 +207,16 @@ public class NormalContract extends Contract {
 
 
             // sms
-            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
-            SendSMSResponse smsResponse = smsClient.sendSms(this.getSrcPublicOwner().getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
-            System.out.println(smsResponse.toString());
-            System.err.println(smsResponse.getSendSMSResult());
+//            String message = "واریز به حساب امانی شما نزد بانک اقتصاد نوین:\n" + "\n(حساب عملیاتی بازگشت)" + "\n" + "مبلغ:" + GlobalVariables.getThousandsSeparated(value) + "ریال";
+//            SendSMSResponse smsResponse = smsClient.sendSms(this.getSrcPublicOwner().getMobileNumber(), message, SMSGateway.ADVERTISEMENT, "demo");
+//            System.out.println(smsResponse.toString());
+//            System.err.println(smsResponse.getSendSMSResult());
 
 
             //transfer
-            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalVariables.operationalClaimOwner.getIbUsername(), GlobalVariables.operationalClaimOwner.getIbPassword(), GlobalVariables.operationalClaimOwner.getBankAccountId(), GlobalVariables.operationalReturnOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
-            System.out.println("exchanger(tavalaee) to return(mojahed):");
-            System.err.println(transferResponse.getNormalTransferResult());
+//            NormalTransferResponse transferResponse = yaghutClient.normalTransfer(GlobalVariables.operationalClaimOwner.getIbUsername(), GlobalVariables.operationalClaimOwner.getIbPassword(), GlobalVariables.operationalClaimOwner.getBankAccountId(), GlobalVariables.operationalReturnOwner.getBankAccountId(), new BigDecimal(value), "destinationComment", "sourceComment");
+//            System.out.println("exchanger(tavalaee) to return(mojahed):");
+//            System.err.println(transferResponse.getNormalTransferResult());
 
             TransactionType transactionType = TransactionType.RETURN_REMAINING;
             Transaction transaction = new InternalTransaction(this, operator, operatorType, transactionType, this.exchangerAccount, this.returnAccount, value, GlobalVariables.getNow());
@@ -236,6 +236,7 @@ public class NormalContract extends Contract {
             }
         }
     }
+
 
     //custom serializing ...............................................................................................
 

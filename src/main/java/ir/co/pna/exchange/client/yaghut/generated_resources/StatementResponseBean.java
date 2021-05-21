@@ -6,7 +6,7 @@
 //
 
 
-package ir.co.pna.exchange.client.yaghut2.generated_resources;
+package ir.co.pna.exchange.client.yaghut.generated_resources;
 
 import java.util.ArrayList;
 import java.util.List;

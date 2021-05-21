@@ -125,7 +125,7 @@ public class SubcontractServiceImpl implements SubcontractService {
 
     @Override
     @Transactional
-    public Subcontract pay(Subcontract theSubcontract, Map<String, Object> payload) {
+    public Subcontract act(Subcontract theSubcontract, String action, Map<String, Object> payload) {
         String operatorNationalCode = (String) payload.get("operator_national_code");
         TransactionOperatorType operatorType = TransactionOperatorType.valueOf((String) payload.get("operator_type"));
 
@@ -133,7 +133,21 @@ public class SubcontractServiceImpl implements SubcontractService {
         if (operator == null) {
             throw new MyEntityNotFoundException("operator id not found - " + operatorNationalCode);
         }
-        theSubcontract.pay(operatorType, operator, smsClient, yaghutClient);
+
+        switch (action) {
+            case "accept":
+                theSubcontract.setStatus(ContractStatus.WAITING_FOR_EXCHANGER_PAYMENT);
+                break;
+            case "reject":
+                theSubcontract.setStatus(ContractStatus.REJECTED_BY_EXPORTER);
+                break;
+            case "pay":
+                theSubcontract.pay(operatorType, operator, smsClient, yaghutClient);
+                break;
+            case "end":
+                theSubcontract.setStatus(ContractStatus.WAITING_FOR_PARENT);
+                break;
+        }
         return subcontractDAO.save(theSubcontract);
     }
 

@@ -8,15 +8,15 @@ import java.util.Map;
 
 public interface SubcontractService {
 
-	List<Subcontract> findAll();
+    List<Subcontract> findAll();
 
-	Subcontract findById(int id);
+    Subcontract findById(int id);
 
-	Subcontract save(Map<String, Object> payload);
+    Subcontract save(Map<String, Object> payload);
 
-	Subcontract update(Subcontract theSubcontract, Map<String, Object> payload);
+    Subcontract update(Subcontract theSubcontract, Map<String, Object> payload);
 
-	Subcontract pay(Subcontract theSubcontract, Map<String, Object> payload);
+    Subcontract act(Subcontract theSubcontract, String action, Map<String, Object> payload);
 
-	Subcontract judge(Subcontract theSubcontract, Map<String, Object> payload);
+    Subcontract judge(Subcontract theSubcontract, Map<String, Object> payload);
 }

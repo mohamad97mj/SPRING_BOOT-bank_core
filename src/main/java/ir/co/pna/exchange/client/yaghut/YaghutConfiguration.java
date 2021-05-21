@@ -20,7 +20,7 @@ public class YaghutConfiguration {
     @Bean(name="yaghutClient")
     public YaghutClient yaghutClient(@Qualifier("yaghutMarshaller") Jaxb2Marshaller marshaller) {
         YaghutClient client = new YaghutClient();
-        client.setDefaultUri("http://10.0.78.29/enbankyaghut/EnbankYaghutService.asmx");
+        client.setDefaultUri("http://10.0.64.50:80/EnBankYaghut/ExchangeService.asmx");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
         return client;
